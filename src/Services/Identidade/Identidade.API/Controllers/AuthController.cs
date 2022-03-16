@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Identidade.API.Controllers
 {
+    [ApiController]
     [Route("api/identidade")]
+    [Produces("application/json")]
     public class AuthController : Controller
     {
         private readonly SignInManager<IdentityUser> _signManager;
@@ -15,8 +17,27 @@ namespace Identidade.API.Controllers
             _signManager = signManager;
             _userManager = userManager;
         }
-
+        /// <summary>
+        /// Adiciona um Novo Usuário
+        /// </summary>
+        /// <param name="usuarioRegistro"></param>
+        /// <returns>Um novo usuário cadastrado</returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Auth
+        ///     {
+        ///        "Email": "teste@teste.com",
+        ///        "Senha": "Teste@1234",
+        ///        "SenhaConfirmacao": "Teste@1234"
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="200">Sucesso</response>
+        /// <response code="400">Usuário já existente no Identity</response>
         [HttpPost("nova-conta")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Registrar(UsuarioRegistro usuarioRegistro)
         {
             if (!ModelState.IsValid) return BadRequest();
@@ -40,7 +61,26 @@ namespace Identidade.API.Controllers
             };
         }
 
+        /// <summary>
+        /// Faz login do Usuário
+        /// </summary>
+        /// <param name="usuarioLogin"></param>
+        /// <returns>Token de acesso do usuário</returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Auth
+        ///     {
+        ///        "Email": "teste@teste.com",
+        ///        "Senha": "Teste@1234"
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="200">Sucesso</response>
+        /// <response code="400">Usuário não autenticado no Identity</response>
         [HttpPost("autenticar")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Login(UsuarioLogin usuarioLogin)
         {
             if (!ModelState.IsValid) return BadRequest();

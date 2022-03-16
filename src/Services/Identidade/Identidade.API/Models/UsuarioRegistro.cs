@@ -13,13 +13,13 @@ namespace Identidade.API.Models
         public string Senha { get; set; }
 
         [Compare("Senha", ErrorMessage = "As senhas não conferem")]
-        public string SenhaForte { get; set; }
+        public string SenhaConfirmacao { get; set; }
 
         public UsuarioRegistro()
         {
             Email = string.Empty;
             Senha = string.Empty;
-            SenhaForte = string.Empty;
+            SenhaConfirmacao = string.Empty;
         }
     }
 }
