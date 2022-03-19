@@ -1,10 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApp.MVC.Models;
+using WebApp.MVC.Services;
 
 namespace WebApp.MVC.Controllers
 {
     public class IdentidadeController : Controller
     {
+        private readonly IAutenticacaoService _autenticacaoService;
+        public IdentidadeController(IAutenticacaoService autenticacaoService)
+        {
+            _autenticacaoService = autenticacaoService;
+
+        }
         [HttpGet]
         [Route("nova-conta")]
         public IActionResult Registro()
@@ -17,9 +24,8 @@ namespace WebApp.MVC.Controllers
         public async Task<IActionResult> Registro(UsuarioRegistro usuarioRegistro)
         {
             if (!ModelState.IsValid) return View(usuarioRegistro);
-            
-            // API - Registro
 
+            var respostaLogin = await _autenticacaoService.Registro(usuarioRegistro);
             if (false) return View(usuarioRegistro);
 
             return RedirectToAction(actionName: "Index", controllerName: "Home");
@@ -37,9 +43,8 @@ namespace WebApp.MVC.Controllers
         public async Task<IActionResult> Login(UsuarioLogin usuarioLogin)
         {
             if (!ModelState.IsValid) return View(usuarioLogin);
-            
-            // API - Registro
 
+            var respostaLogin = await _autenticacaoService.Login(usuarioLogin);
             if (false) return View(usuarioLogin);
 
             return RedirectToAction(actionName: "Index", controllerName: "Home");
