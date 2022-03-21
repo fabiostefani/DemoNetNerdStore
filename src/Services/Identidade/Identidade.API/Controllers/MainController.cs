@@ -7,13 +7,18 @@ namespace Identidade.API.Controllers
     public abstract class MainController : Controller
     {
         protected ICollection<string> Erros = new List<string>();
-        protected ActionResult CustomResponse(object result = null)
+        protected ActionResult CustomResponse(object result)
         {
             if (OperacaoValida()) return Ok(result);
             return BadRequest(new ValidationProblemDetails(new Dictionary<string, string[]>
             {
                 {"Mensagens", Erros.ToArray()}
             }));
+        }
+
+        protected ActionResult CustomResponse()
+        {
+            return CustomResponse(new { });            
         }
 
         protected ActionResult CustomResponse(ModelStateDictionary modelState)
