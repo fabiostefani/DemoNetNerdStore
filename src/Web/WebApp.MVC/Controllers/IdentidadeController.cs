@@ -8,7 +8,7 @@ using WebApp.MVC.Services;
 
 namespace WebApp.MVC.Controllers
 {
-    public class IdentidadeController : Controller
+    public class IdentidadeController : MainController
     {
         private readonly IAutenticacaoService _autenticacaoService;
         public IdentidadeController(IAutenticacaoService autenticacaoService)
@@ -29,10 +29,10 @@ namespace WebApp.MVC.Controllers
         {
             if (!ModelState.IsValid) return View(usuarioRegistro);
 
-            var respostaLogin = await _autenticacaoService.Registro(usuarioRegistro);
-            // if (false) return View(usuarioRegistro);
+            var respostaLogin = await _autenticacaoService.Registro(usuarioRegistro);            
             if (respostaLogin == null)
                 throw new Exception("Erro gerando o login na API de Autenticação.");            
+            if (ResponsePossuiErros(respostaLogin.ResponseResult) ) return View(usuarioRegistro);
             await RealizarLogin(respostaLogin);
 
             return RedirectToAction(actionName: "Index", controllerName: "Home");
@@ -50,11 +50,10 @@ namespace WebApp.MVC.Controllers
         public async Task<IActionResult> Login(UsuarioLogin usuarioLogin)
         {
             if (!ModelState.IsValid) return View(usuarioLogin);
-
             var respostaLogin = await _autenticacaoService.Login(usuarioLogin);
-            //if (false) return View(usuarioLogin);
             if (respostaLogin == null)
                 throw new Exception("Erro gerando o login na API de Autenticação.");            
+            if (ResponsePossuiErros(respostaLogin.ResponseResult) ) return View(usuarioLogin);
             await RealizarLogin(respostaLogin);
 
             return RedirectToAction(actionName: "Index", controllerName: "Home");

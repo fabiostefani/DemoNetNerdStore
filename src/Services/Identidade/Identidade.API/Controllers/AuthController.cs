@@ -104,7 +104,7 @@ namespace Identidade.API.Controllers
                 return CustomResponse();
             }
             AdicionarErroProcessamento("Usuário/senha inválido.");
-            return BadRequest();
+            return CustomResponse();
         }
 
         private async Task<UsuarioRespostaLogin> GerarJwt(string email)

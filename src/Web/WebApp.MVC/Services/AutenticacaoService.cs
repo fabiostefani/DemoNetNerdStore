@@ -4,7 +4,7 @@ using WebApp.MVC.Models;
 
 namespace WebApp.MVC.Services
 {
-    public class AutenticacaoService : IAutenticacaoService
+    public class AutenticacaoService : Service, IAutenticacaoService
     {
         private readonly HttpClient _httpClient;
 
@@ -16,7 +16,19 @@ namespace WebApp.MVC.Services
         public async Task<UsuarioRespostaLogin?> Login(UsuarioLogin usuarioLogin)
         {
             StringContent loginContent = MontarContent<UsuarioLogin>(usuarioLogin);
-            var response = await _httpClient.PostAsync(requestUri: "https://localhost:7002/api/identidade/autenticar", content: loginContent);            
+            var response = await _httpClient.PostAsync(requestUri: "https://localhost:7002/api/identidade/autenticar", content: loginContent);
+            if (!TratarErrosResponse(response))
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                var aa = await response.Content.ReadAsStringAsync();
+                return new UsuarioRespostaLogin()
+                {
+                    ResponseResult = JsonSerializer.Deserialize<ResponseResult>(await response.Content.ReadAsStringAsync(), options)
+                };                            
+            };            
             return MontarRetorno(await response.Content.ReadAsStringAsync());
         }
 
@@ -24,6 +36,17 @@ namespace WebApp.MVC.Services
         {
             StringContent usuarioRegistroContent = MontarContent<UsuarioRegistro>(usuarioRegistro);            
             var response = await _httpClient.PostAsync(requestUri: "https://localhost:7002/api/identidade/nova-conta", content: usuarioRegistroContent);
+            if (!TratarErrosResponse(response))
+            {
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                return new UsuarioRespostaLogin
+                {
+                    ResponseResult = JsonSerializer.Deserialize<ResponseResult>(await response.Content.ReadAsStringAsync(), options)
+                };
+            }
             return MontarRetorno(await response.Content.ReadAsStringAsync());
         }
 

@@ -40,14 +40,14 @@ namespace WebApp.MVC.Extensions
         public string? ObterUserEmail()
         {
             return EstaAutenticado()
-                ? _accessor?.HttpContext?.User.GetUserEmail()
+                ? _accessor.ValidarHttpContext().ValidarUser().GetUserEmail()
                 : string.Empty;
         }
 
         public Guid? ObterUserId()
         {
-            var guidUserId = _accessor?.HttpContext?.User?.GetUserId();
-            if (guidUserId == null)
+            string guidUserId = _accessor.ValidarHttpContext().ValidarUser().GetUserId();
+            if (string.IsNullOrEmpty(guidUserId))
                 throw new Exception("Erro recuperando o Guid do usuário");            
             return EstaAutenticado()
                 ? Guid.Parse(guidUserId)
@@ -57,13 +57,16 @@ namespace WebApp.MVC.Extensions
         public string? ObterUserToken()
         {
             return EstaAutenticado()
-                ? _accessor?.HttpContext?.User?.GetUserToken()
+                ? _accessor.ValidarHttpContext().ValidarUser().GetUserToken()
                 : string.Empty;
         }
 
         public bool? PossuiRole(string role)
         {
-            return _accessor?.HttpContext?.User?.IsInRole(role);
+            return _accessor
+            .ValidarHttpContext()
+            .ValidarUser()
+            .IsInRole(role);
         }
     }
 }

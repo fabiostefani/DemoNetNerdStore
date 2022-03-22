@@ -40,5 +40,25 @@ namespace WebApp.MVC.Extensions
         {
             return httpContext;
         }
+
+        public static string ObterUserEmail(this ClaimsPrincipal user)
+        {
+            return user.GetUserEmail();
+        }
+
+        public static string ObterUserId(this ClaimsPrincipal user)
+        {
+            return user.GetUserId();            
+        }
+
+        public static string ObterUserToken(this ClaimsPrincipal user)
+        {
+            return user.GetUserToken();
+        }
+
+        public static bool PossuiRole(this ClaimsPrincipal user, string role)
+        {
+            return user.IsInRole(role);
+        }
     }
 }
