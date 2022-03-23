@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using WebApp.MVC.Extensions;
 
 namespace WebApp.MVC.Configuration
 {
@@ -17,7 +18,8 @@ namespace WebApp.MVC.Configuration
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/erro/500");
+                app.UseStatusCodePagesWithRedirects("/erro/{0}");
                 app.UseHsts();
             }
 
@@ -26,6 +28,7 @@ namespace WebApp.MVC.Configuration
 
             app.UseRouting();
             app.UseIdentityConfiguration();
+            app.UseMiddleware<ExceptionMiddleware>();
         }
     }
 }

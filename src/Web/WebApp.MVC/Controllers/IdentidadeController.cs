@@ -40,29 +40,32 @@ namespace WebApp.MVC.Controllers
 
         [HttpGet]
         [Route("login")]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(UsuarioLogin usuarioLogin)
+        public async Task<IActionResult> Login(UsuarioLogin usuarioLogin, string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             if (!ModelState.IsValid) return View(usuarioLogin);
             var respostaLogin = await _autenticacaoService.Login(usuarioLogin);
             if (respostaLogin == null)
                 throw new Exception("Erro gerando o login na API de Autenticação.");            
             if (ResponsePossuiErros(respostaLogin.ResponseResult) ) return View(usuarioLogin);
             await RealizarLogin(respostaLogin);
-
-            return RedirectToAction(actionName: "Index", controllerName: "Home");
+            if (string.IsNullOrEmpty(returnUrl)) return RedirectToAction("Index", "Home");
+            return LocalRedirect(returnUrl);
         }
 
         [HttpGet]
         [Route("sair")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction(actionName: "Index", controllerName: "Home");
         }
 

@@ -49,6 +49,7 @@ namespace Identidade.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Registrar(UsuarioRegistro usuarioRegistro)
         {
+            return new StatusCodeResult(403);
             if (!ModelState.IsValid) 
                 return CustomResponse(usuarioRegistro);
             IdentityUser user = CreateUserIdentity(usuarioRegistro);
