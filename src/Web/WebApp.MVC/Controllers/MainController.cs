@@ -7,6 +7,7 @@ namespace WebApp.MVC.Controllers
     {
         protected bool ResponsePossuiErros(ResponseResult response)
         {
+            ArgumentNullException.ThrowIfNull(response, "Resposta do Login Inválida.");            
             if (!PossuiErros(response)) return false;
             response.Errors.Mensagens.ForEach
             (

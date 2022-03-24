@@ -40,25 +40,25 @@ namespace WebApp.MVC.Controllers
 
         [HttpGet]
         [Route("login")]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login(/*string returnUrl = null*/)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            //ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(UsuarioLogin usuarioLogin, string returnUrl = null)
+        public async Task<IActionResult> Login(UsuarioLogin usuarioLogin/*, string returnUrl = null*/)
         {
-            ViewData["ReturnUrl"] = returnUrl;
+            //ViewData["ReturnUrl"] = returnUrl;
             if (!ModelState.IsValid) return View(usuarioLogin);
             var respostaLogin = await _autenticacaoService.Login(usuarioLogin);
-            if (respostaLogin == null)
-                throw new Exception("Erro gerando o login na API de Autenticação.");            
+            ArgumentNullException.ThrowIfNull(respostaLogin, "Erro gerando o login na API de Autenticação.");            
             if (ResponsePossuiErros(respostaLogin.ResponseResult) ) return View(usuarioLogin);
             await RealizarLogin(respostaLogin);
-            if (string.IsNullOrEmpty(returnUrl)) return RedirectToAction("Index", "Home");
-            return LocalRedirect(returnUrl);
+            // if (string.IsNullOrEmpty(returnUrl)) return RedirectToAction("Index", "Home");
+            // return LocalRedirect(returnUrl);
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -71,11 +71,9 @@ namespace WebApp.MVC.Controllers
 
         private async Task RealizarLogin(UsuarioRespostaLogin usuarioRespostaLogin)
         {
-            if (string.IsNullOrEmpty(usuarioRespostaLogin.AccessToken)) 
-                throw new Exception("Token inválido.");            
+            ArgumentNullException.ThrowIfNull(usuarioRespostaLogin.AccessToken, "Token Inválido");            
             JwtSecurityToken? token = ObterTokenFormatado(usuarioRespostaLogin.AccessToken);
-            if (token == null) 
-                throw new Exception("Falha na formatação do Token.");
+            ArgumentNullException.ThrowIfNull(token, "Falha na formatação do Token.");            
             var claims = new List<Claim>();
             claims.Add(new Claim(type: "JWT", value: usuarioRespostaLogin.AccessToken));
             claims.AddRange(token.Claims);
