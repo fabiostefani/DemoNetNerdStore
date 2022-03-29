@@ -1,3 +1,4 @@
+using Core.Data;
 using Core.DomainObjects;
 
 namespace Catalogo.API.Models

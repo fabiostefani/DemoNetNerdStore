@@ -1,4 +1,5 @@
 using Catalogo.API.Models;
+using Core.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalogo.API.Data.Repositories
@@ -6,6 +7,8 @@ namespace Catalogo.API.Data.Repositories
     public class ProdutoRepository : IProdutoRepository
     {
         private readonly CatalogoContext _context;
+        public IUnitOfWork UnitOfWork => _context;
+        
         public ProdutoRepository(CatalogoContext context)
         {
             _context = context;
@@ -16,7 +19,7 @@ namespace Catalogo.API.Data.Repositories
             return await _context.Produtos.AsNoTracking().ToListAsync();
         }
 
-        public async Task<Produto> ObterPorId(Guid id)
+        public async Task<Produto>? ObterPorId(Guid id)
         {
             return await _context.Produtos.FindAsync(id);
         }

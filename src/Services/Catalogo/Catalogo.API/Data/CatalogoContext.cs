@@ -1,9 +1,10 @@
 using Catalogo.API.Models;
+using Core.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalogo.API.Data
 {
-    public class CatalogoContext : DbContext
+    public class CatalogoContext : DbContext, IUnitOfWork
     {
         public CatalogoContext(DbContextOptions<CatalogoContext> options)
             :base(options)
@@ -25,6 +26,11 @@ namespace Catalogo.API.Data
                     }                    
                 }
                 
+        }
+
+        public async Task<bool> Commit()
+        {
+            return await base.SaveChangesAsync() > 0;
         }
     }
 }
