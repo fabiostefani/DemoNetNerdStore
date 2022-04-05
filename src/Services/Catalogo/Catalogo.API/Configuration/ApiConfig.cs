@@ -1,3 +1,4 @@
+using Api.Core.Identidade;
 using Catalogo.API.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,8 +20,7 @@ namespace Catalogo.API.Configuration
                         .AllowAnyHeader()
                 );
             });
-
-            services.AddEndpointsApiExplorer();
+            
             return services;
         }
 
@@ -33,7 +33,7 @@ namespace Catalogo.API.Configuration
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("Total");
-
+            app.UseAuthConfiguration();
             return app;
         }
     }

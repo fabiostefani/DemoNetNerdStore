@@ -1,4 +1,4 @@
-namespace Identidade.API.Extensions
+namespace Api.Core.Identidade
 {
     public class AppSettings
     {

@@ -1,3 +1,5 @@
+using Api.Core.Identidade;
+
 namespace Identidade.API.Configuration
 {
     public static class ApiConfig
@@ -17,7 +19,7 @@ namespace Identidade.API.Configuration
             }
             app.UseHttpsRedirection();
 
-            app.UseIdentityConfiguration();
+            app.UseAuthConfiguration();
             
             return app;
         }

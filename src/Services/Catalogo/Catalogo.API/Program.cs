@@ -1,8 +1,10 @@
+using Api.Core.Identidade;
 using Catalogo.API.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApiConfiguration(builder.Configuration);
+builder.Services.AddJwtConfiguration(builder.Configuration);            
 builder.Services.AddSwaggerConfiguration();
 builder.Services.RegisterServices();
 
