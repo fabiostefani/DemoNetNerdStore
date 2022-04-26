@@ -6,9 +6,9 @@ namespace WebApp.MVC.Controllers
 {
     public class CatalogoController : MainController
     {
-        private readonly ICatalogoServiceRefit _catalogoService;
+        private readonly ICatalogoService _catalogoService;
 
-        public CatalogoController(ICatalogoServiceRefit catalogoService)
+        public CatalogoController(ICatalogoService catalogoService)
         {
             _catalogoService = catalogoService;
         }
