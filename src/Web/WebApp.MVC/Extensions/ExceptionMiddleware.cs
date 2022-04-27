@@ -1,4 +1,5 @@
 using System.Net;
+using Polly.CircuitBreaker;
 using Refit;
 
 namespace WebApp.MVC.Extensions
@@ -29,6 +30,10 @@ namespace WebApp.MVC.Extensions
             {
                 HandleRequestExceptionAsync(httpContext, ex.StatusCode);
             }
+            catch (BrokenCircuitException)
+            {
+                HandleCircuitBreakerExceptionAsync(httpContext);
+            }
         }
 
         private static void HandleRequestExceptionAsync(HttpContext httpContext, HttpStatusCode statusCode)
@@ -38,8 +43,10 @@ namespace WebApp.MVC.Extensions
                 httpContext.Response.Redirect($"/login?ReturnUrl={httpContext.Request.Path}");
                 return;
             }
-
             httpContext.Response.StatusCode = (int)statusCode;
         }
+
+        private static void HandleCircuitBreakerExceptionAsync(HttpContext context) 
+            => context.Response.Redirect("/sistema-indisponivel");
     }
 }

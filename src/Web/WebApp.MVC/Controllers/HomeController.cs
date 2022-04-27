@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Net;
 using WebApp.MVC.Core;
 using WebApp.MVC.Models;
 
@@ -44,6 +45,18 @@ public class HomeController : Controller
             return StatusCode(InternalStatusCode.NotFound);
         }
 
+        return View("Error", modelErro);
+    }
+
+    [Route("sistema-indisponivel")]
+    public IActionResult SistemaIndisponivel()
+    {
+        var modelErro = new ErrorViewModel
+        {
+            Mensagem = "O sistema está temporariamente indisponível, isto pode ocorrer em momentos de sobrecarga de usuários",
+            Titulo = "Sistema indisponível",
+            ErroCode = (int) HttpStatusCode.InternalServerError
+        };
         return View("Error", modelErro);
     }
 }
