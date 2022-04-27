@@ -1,4 +1,6 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Localization;
 using WebApp.MVC.Extensions;
 
 namespace WebApp.MVC.Configuration
@@ -33,6 +35,13 @@ namespace WebApp.MVC.Configuration
 
             app.UseRouting();
             app.UseIdentityConfiguration();
+            var supportedCultures = new[] {new CultureInfo("pt-BR")};
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("pt-BR"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            });
             app.UseMiddleware<ExceptionMiddleware>();
         }
     }
