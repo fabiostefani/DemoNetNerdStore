@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalogo.API", "src\service
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cliente", "Cliente", "{75352424-E237-4EBC-8523-59573DE47FE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cliente.API", "src\services\Cliente\Cliente.API\Cliente.API.csproj", "{1075A55F-6C50-4264-A86E-84B67860474D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clientes.API", "src\services\Cliente\Clientes.API\Clientes.API.csproj", "{1075A55F-6C50-4264-A86E-84B67860474D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pagamento", "Pagamento", "{083EC39B-0BF0-40CD-9349-58408B535747}"
 EndProject

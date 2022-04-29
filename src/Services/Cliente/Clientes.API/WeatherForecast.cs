@@ -1,4 +1,4 @@
-namespace Cliente.API;
+namespace Clientes.API;
 
 public class WeatherForecast
 {

@@ -1,13 +1,14 @@
-using Api.Core.Identidade;
-using Catalogo.API.Data;
+﻿using Api.Core.Identidade;
+using Clientes.API.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Catalogo.API.Configuration;
+namespace Clientes.API.Configuration;
+
 public static class ApiConfig
 {
     public static IServiceCollection AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<CatalogoContext>(options =>
+        services.AddDbContext<ClientesContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
         services.AddControllers();
         services.AddCors(options =>
@@ -19,7 +20,7 @@ public static class ApiConfig
                     .AllowAnyHeader()
             );
         });
-        
+            
         return services;
     }
 

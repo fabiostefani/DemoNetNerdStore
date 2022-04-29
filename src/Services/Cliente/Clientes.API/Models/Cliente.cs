@@ -1,6 +1,6 @@
 ﻿using Core.DomainObjects;
 
-namespace Cliente.API.Models;
+namespace Clientes.API.Models;
 
 public class Cliente : Entity, IAggregateRoot
 {
