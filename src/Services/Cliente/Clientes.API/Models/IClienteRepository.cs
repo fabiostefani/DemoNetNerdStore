@@ -1,0 +1,10 @@
+﻿using Core.Data;
+
+namespace Clientes.API.Models;
+
+public interface IClienteRepository : IRepository<Cliente>
+{
+    void Adicionar(Cliente cliente);
+    Task<IEnumerable<Cliente?>> ObterTodos();
+    Task<Cliente?> ObterPorCpf(string cpf);
+}
