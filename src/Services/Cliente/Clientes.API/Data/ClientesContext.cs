@@ -1,14 +1,19 @@
 ﻿using Clientes.API.Models;
 using Core.Data;
+using Core.Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace Clientes.API.Data;
 
 public sealed class ClientesContext : DbContext, IUnitOfWork
 {
-    public ClientesContext(DbContextOptions<ClientesContext> options)
+    private readonly IMediatorHandler _mediatorHandler;
+
+    public ClientesContext(DbContextOptions<ClientesContext> options,
+                          IMediatorHandler mediatorHandler)
         : base(options)
     {
+        _mediatorHandler = mediatorHandler;
         ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         ChangeTracker.AutoDetectChangesEnabled = false;
     }
@@ -38,6 +43,10 @@ public sealed class ClientesContext : DbContext, IUnitOfWork
 
     public async Task<bool> Commit()
     {
-        return await base.SaveChangesAsync() > 0;
+        var suscesso = await base.SaveChangesAsync() > 0;
+        if (suscesso) 
+            await _mediatorHandler.PublicarEventos(this);
+        
+        return suscesso;
     }
 }

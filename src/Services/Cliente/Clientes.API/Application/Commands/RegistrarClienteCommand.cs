@@ -17,4 +17,10 @@ public class RegistrarClienteCommand : Command
         Email = email;
         Cpf = cpf;
     }
+
+    public override bool EhValido()
+    {
+        ValidationResult = new RegistrarClienteValidation().Validate(this);
+        return ValidationResult.IsValid;
+    }
 }

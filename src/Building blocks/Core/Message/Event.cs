@@ -1,6 +1,8 @@
-﻿namespace Core.Message;
+﻿using MediatR;
 
-public abstract class Event : Message
+namespace Core.Message;
+
+public abstract class Event : Message, INotification
 {
     
 }

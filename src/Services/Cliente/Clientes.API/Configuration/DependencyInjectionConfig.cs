@@ -1,4 +1,5 @@
 ﻿using Clientes.API.Application.Commands;
+using Clientes.API.Application.Events;
 using Clientes.API.Data;
 using Clientes.API.Data.Repository;
 using Clientes.API.Models;
@@ -14,6 +15,7 @@ public static class DependencyInjectionConfig
     {
         services.AddScoped<IMediatorHandler, MediatorHandler>();
         services.AddScoped<IRequestHandler<RegistrarClienteCommand, ValidationResult>, ClienteCommandHandler>();
+        services.AddScoped<INotificationHandler<ClienteRegistradoEvent>, ClienteEventHandler>();
         services.AddScoped<IClienteRepository, ClienteRepository>();
         services.AddScoped<ClientesContext>();
         return services;

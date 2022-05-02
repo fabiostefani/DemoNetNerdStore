@@ -1,4 +1,5 @@
-﻿using Clientes.API.Models;
+﻿using Clientes.API.Application.Events;
+using Clientes.API.Models;
 using Core.Message;
 using FluentValidation.Results;
 using MediatR;
@@ -23,6 +24,7 @@ public class ClienteCommandHandler : CommandHandler, IRequestHandler<RegistrarCl
             return ValidationResult;
         }
         _clienteRepository.Adicionar(cliente);
+        cliente.AdicioanrEvento(new ClienteRegistradoEvent(message.Id, message.Nome, message.Email, message.Email));
         return await PersistirDados(_clienteRepository.UnitOfWork);
     }
 }
