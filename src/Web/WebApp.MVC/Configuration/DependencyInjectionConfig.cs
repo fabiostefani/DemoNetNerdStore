@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Polly;
 using WebApp.MVC.Extensions;
 using WebApp.MVC.Services;
@@ -9,6 +10,7 @@ namespace WebApp.MVC.Configuration
     {
         public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSingleton<IValidationAttributeAdapterProvider, CpfValidationAttributeAdapterProvider>();
             services.AddTransient<HttpClientAuthorizationDelegationHandler>();
             services.AddHttpClient<IAutenticacaoService, AutenticacaoService>();
             services.AddHttpClient<ICatalogoService, CatalogoService>()
