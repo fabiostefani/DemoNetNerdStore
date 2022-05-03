@@ -1,5 +1,7 @@
 using Catalogo.API.Models;
 using Core.Data;
+using Core.Message;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalogo.API.Data
@@ -16,6 +18,8 @@ namespace Catalogo.API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Ignore<ValidationResult>();
+            modelBuilder.Ignore<Event>();
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(CatalogoContext).Assembly);
             foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(
                 e => e.GetProperties().Where(p => p.ClrType == typeof(string))))

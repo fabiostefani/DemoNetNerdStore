@@ -1,3 +1,4 @@
+using Api.Core.Controllers;
 using Api.Core.Identidade;
 using Catalogo.API.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -5,9 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Catalogo.API.Controllers
 {
-    [ApiController]
     [Authorize]
-    public class CatalogoController : Controller
+    public class CatalogoController : MainController
     {
         private readonly IProdutoRepository _produtoRepository;
         public CatalogoController(IProdutoRepository produtoRepository)

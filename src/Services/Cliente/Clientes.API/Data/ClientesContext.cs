@@ -1,6 +1,8 @@
 ﻿using Clientes.API.Models;
 using Core.Data;
 using Core.Mediator;
+using Core.Message;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace Clientes.API.Data;
@@ -23,6 +25,8 @@ public sealed class ClientesContext : DbContext, IUnitOfWork
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Ignore<ValidationResult>();
+        modelBuilder.Ignore<Event>();
         foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(
                      e => e.GetProperties().Where(p => p.ClrType == typeof(string))))
         {
