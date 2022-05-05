@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Api.Core.Identidade;
+using Core.Message.Integration;
+using EasyNetQ;
 
 namespace Identidade.API.Controllers
 {
@@ -18,6 +20,7 @@ namespace Identidade.API.Controllers
         private readonly SignInManager<IdentityUser> _signManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppSettings _appSettings;
+        private IBus? _bus;
 
         public AuthController(SignInManager<IdentityUser> signManager,
                               UserManager<IdentityUser> userManager, 
@@ -54,8 +57,11 @@ namespace Identidade.API.Controllers
                 return CustomResponse(usuarioRegistro);
             IdentityUser user = CreateUserIdentity(usuarioRegistro);
             var resultCreateUser = await _userManager.CreateAsync(user, usuarioRegistro.Senha);
-            if (resultCreateUser.Succeeded) 
-                return CustomResponse(await GerarJwt(usuarioRegistro.Email));            
+            if (resultCreateUser.Succeeded)
+            {
+                ResponseMessage sucesso = await RegistrarCliente(usuarioRegistro);
+                return CustomResponse(await GerarJwt(usuarioRegistro.Email));    
+            }
             foreach (var erro in resultCreateUser.Errors)
             {
                 AdicionarErroProcessamento(erro.Description);
@@ -63,6 +69,15 @@ namespace Identidade.API.Controllers
             return CustomResponse();
         }
 
+        private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
+        {
+            var usuario = await _userManager.FindByEmailAsync(usuarioRegistro.Email);
+            var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(Guid.Parse(usuario.Id), usuarioRegistro.Nome,
+                usuarioRegistro.Email, usuarioRegistro.Cpf);
+            _bus = RabbitHutch.CreateBus("host=localhost:5672");
+            return await _bus.Rpc.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
+        }
+        
         private static IdentityUser CreateUserIdentity(UsuarioRegistro usuarioRegistro)
         {
             return new IdentityUser

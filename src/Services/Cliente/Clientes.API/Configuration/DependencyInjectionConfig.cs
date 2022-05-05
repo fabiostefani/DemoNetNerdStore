@@ -3,6 +3,7 @@ using Clientes.API.Application.Events;
 using Clientes.API.Data;
 using Clientes.API.Data.Repository;
 using Clientes.API.Models;
+using Clientes.API.Services;
 using Core.Mediator;
 using FluentValidation.Results;
 using MediatR;
@@ -18,6 +19,8 @@ public static class DependencyInjectionConfig
         services.AddScoped<INotificationHandler<ClienteRegistradoEvent>, ClienteEventHandler>();
         services.AddScoped<IClienteRepository, ClienteRepository>();
         services.AddScoped<ClientesContext>();
+
+        services.AddHostedService<RegistroClienteIntregrationHandler>();
         return services;
     }
 }
