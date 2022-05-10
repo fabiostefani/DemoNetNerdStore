@@ -17,7 +17,7 @@ public class RegistroClienteIntregrationHandler : BackgroundService
     
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _bus = RabbitHutch.CreateBus("host:localhost:5672");
+        _bus = RabbitHutch.CreateBus("host=localhost:5672");
         _bus.Rpc.RespondAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(async request =>
             new ResponseMessage(await RegistrarClient(request))
         );

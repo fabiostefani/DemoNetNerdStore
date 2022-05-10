@@ -71,7 +71,7 @@ namespace Identidade.API.Controllers
 
         private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
         {
-            var usuario = await _userManager.FindByEmailAsync(usuarioRegistro.Email);
+            IdentityUser? usuario = await _userManager.FindByEmailAsync(usuarioRegistro.Email);
             var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(Guid.Parse(usuario.Id), usuarioRegistro.Nome,
                 usuarioRegistro.Email, usuarioRegistro.Cpf);
             _bus = RabbitHutch.CreateBus("host=localhost:5672");
