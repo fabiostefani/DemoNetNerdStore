@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Api.Core.Identidade;
 using Core.Message.Integration;
 using EasyNetQ;
+using MessageBus;
 
 namespace Identidade.API.Controllers
 {
@@ -20,15 +21,17 @@ namespace Identidade.API.Controllers
         private readonly SignInManager<IdentityUser> _signManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppSettings _appSettings;
-        private IBus? _bus;
+        private readonly IMessageBus _bus;
 
         public AuthController(SignInManager<IdentityUser> signManager,
                               UserManager<IdentityUser> userManager, 
-                              IOptions<AppSettings> appSettings)
+                              IOptions<AppSettings> appSettings,
+                              IMessageBus bus)
         {
             _signManager = signManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;
+            _bus = bus;
         }
         /// <summary>
         /// Adiciona um Novo Usuário
@@ -59,7 +62,12 @@ namespace Identidade.API.Controllers
             var resultCreateUser = await _userManager.CreateAsync(user, usuarioRegistro.Senha);
             if (resultCreateUser.Succeeded)
             {
-                ResponseMessage sucesso = await RegistrarCliente(usuarioRegistro);
+                ResponseMessage clienteResult = await RegistrarCliente(usuarioRegistro);
+                if (!clienteResult.ValidationResult.IsValid)
+                {
+                    await _userManager.DeleteAsync(user);
+                    return CustomResponse(clienteResult.ValidationResult);
+                }
                 return CustomResponse(await GerarJwt(usuarioRegistro.Email));    
             }
             foreach (var erro in resultCreateUser.Errors)
@@ -74,8 +82,15 @@ namespace Identidade.API.Controllers
             IdentityUser? usuario = await _userManager.FindByEmailAsync(usuarioRegistro.Email);
             var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(Guid.Parse(usuario.Id), usuarioRegistro.Nome,
                 usuarioRegistro.Email, usuarioRegistro.Cpf);
-            _bus = RabbitHutch.CreateBus("host=localhost:5672");
-            return await _bus.Rpc.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
+            try
+            {
+                return await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
+            }
+            catch
+            {
+                await _userManager.DeleteAsync(usuario);
+                throw;
+            }
         }
         
         private static IdentityUser CreateUserIdentity(UsuarioRegistro usuarioRegistro)

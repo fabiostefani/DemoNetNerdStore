@@ -19,8 +19,6 @@ public static class DependencyInjectionConfig
         services.AddScoped<INotificationHandler<ClienteRegistradoEvent>, ClienteEventHandler>();
         services.AddScoped<IClienteRepository, ClienteRepository>();
         services.AddScoped<ClientesContext>();
-
-        services.AddHostedService<RegistroClienteIntregrationHandler>();
         return services;
     }
 }

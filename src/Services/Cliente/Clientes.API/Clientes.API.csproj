@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyNetQ" Version="6.3.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="microsoft.entityframeworkcore" Version="6.0.3" />
     <PackageReference Include="microsoft.entityframeworkcore.abstractions" Version="6.0.3" />
@@ -23,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Building blocks\Api.Core\Api.Core.csproj" />
     <ProjectReference Include="..\..\..\building blocks\Core\Core.csproj" />
+    <ProjectReference Include="..\..\..\Building blocks\MessageBus\MessageBus.csproj" />
   </ItemGroup>
 
   <ItemGroup>
