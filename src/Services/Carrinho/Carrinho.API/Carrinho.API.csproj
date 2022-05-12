@@ -7,7 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="microsoft.entityframeworkcore" Version="6.0.5" />
+    <PackageReference Include="microsoft.entityframeworkcore.abstractions" Version="6.0.5" />
+    <PackageReference Include="microsoft.entityframeworkcore.relational" Version="6.0.5" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Building blocks\Api.Core\Api.Core.csproj" />
   </ItemGroup>
 
 </Project>
