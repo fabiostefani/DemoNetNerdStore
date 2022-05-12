@@ -1,6 +1,7 @@
 ﻿using Clientes.API.Application.Commands;
 using Core.Mediator;
 using Core.Message.Integration;
+using EasyNetQ;
 using FluentValidation.Results;
 using MessageBus;
 
@@ -19,10 +20,21 @@ public class RegistroClienteIntregrationHandler : BackgroundService
     
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        SetResponder();
+        return Task.CompletedTask;
+    }
+
+    private void OnConnect(object? sender, EventArgs e)
+    {
+        SetResponder();
+    }
+
+    private void SetResponder()
+    {
         _bus.RespondAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(async request =>
             await RegistrarClient(request)
         );
-        return Task.CompletedTask;
+        _bus.AdvancedBus.Connected += OnConnect;
     }
 
     private async Task<ResponseMessage> RegistrarClient(UsuarioRegistradoIntegrationEvent message)
