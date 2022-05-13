@@ -1,4 +1,6 @@
 ﻿using Api.Core.Identidade;
+using Carrinho.API.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Carrinho.API.Configuration;
 
@@ -6,6 +8,8 @@ public static class ApiConfig
 {
     public static IServiceCollection AddApiConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddDbContext<CarrinhoContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
         services.AddControllers();
         services.AddCors(options =>
         {
