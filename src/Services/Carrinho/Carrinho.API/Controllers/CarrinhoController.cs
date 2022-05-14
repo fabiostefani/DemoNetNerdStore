@@ -16,7 +16,7 @@ public class CarrinhoController : MainController
         return null;
     }
     [HttpPost("carrinho")]
-    public async Task<IActionResult> AdicionarItemCarrinho(Carrinho item)
+    public async Task<IActionResult> AdicionarItemCarrinho(CarrinhoItem item)
     {
         return CustomResponse();
     }
