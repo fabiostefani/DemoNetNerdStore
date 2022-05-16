@@ -1,3 +1,4 @@
+using Api.Core.Usuario;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Polly;
 using WebApp.MVC.Extensions;
@@ -26,7 +27,7 @@ namespace WebApp.MVC.Configuration
             //     .AddTypedClient(Refit.RestService.For<ICatalogoServiceRefit>);
             
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IUser, AspNetUser>();
+            services.AddScoped<IAspNetUser, AspNetUser>();
         }
     }
 }

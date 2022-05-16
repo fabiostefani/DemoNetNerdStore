@@ -1,13 +1,14 @@
 ﻿using System.Net.Http.Headers;
+using Api.Core.Usuario;
 using WebApp.MVC.Extensions;
 
 namespace WebApp.MVC.Services.Handlers;
 
 public class HttpClientAuthorizationDelegationHandler : DelegatingHandler
 {
-    private readonly IUser _user;
+    private readonly IAspNetUser _user;
 
-    public HttpClientAuthorizationDelegationHandler(IUser user)
+    public HttpClientAuthorizationDelegationHandler(IAspNetUser user)
     {
         _user = user;
     }

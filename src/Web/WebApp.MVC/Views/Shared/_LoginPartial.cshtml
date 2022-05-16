@@ -1,5 +1,7 @@
 ﻿@using WebApp.MVC.Extensions
-@inject IUser AppUser;
+@using Api.Core.Usuario
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IAspNetUser AppUser;
 
 
 @if (AppUser.EstaAutenticado())
