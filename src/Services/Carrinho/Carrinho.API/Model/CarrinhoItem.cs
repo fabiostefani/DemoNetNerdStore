@@ -1,4 +1,6 @@
-﻿namespace Carrinho.API.Model;
+﻿using Carrinho.API.Model.Validacoes;
+
+namespace Carrinho.API.Model;
 
 public class CarrinhoItem
 {
@@ -15,4 +17,16 @@ public class CarrinhoItem
     {
         Id = Guid.NewGuid();
     }
+
+    internal void AssociarItem(Guid carrinhoId)
+        => CarrinhoId = carrinhoId;
+
+    internal decimal CalcularValor()
+        => Quantidade * Valor;
+
+    internal void AdicionarUnidades(int unidades)
+        => Quantidade += unidades;
+    
+    internal bool EhValido()
+        => new ItemPedidoValidation().Validate(this).IsValid;
 }

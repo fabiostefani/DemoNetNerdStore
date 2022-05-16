@@ -6,7 +6,7 @@ namespace Api.Core.Usuario;
 public interface IAspNetUser
 {
     string? Name { get; }
-    Guid? ObterUserId();
+    Guid ObterUserId();
     string? ObterUserEmail();
     string? ObterUserToken();
     bool EstaAutenticado();

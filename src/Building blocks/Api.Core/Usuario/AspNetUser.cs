@@ -43,7 +43,7 @@ public class AspNetUser : IAspNetUser
             : string.Empty;
     }
 
-    public Guid? ObterUserId()
+    public Guid ObterUserId()
     {
         string guidUserId = _accessor.ValidarHttpContext().ValidarUser().GetUserId();
         if (string.IsNullOrEmpty(guidUserId))
