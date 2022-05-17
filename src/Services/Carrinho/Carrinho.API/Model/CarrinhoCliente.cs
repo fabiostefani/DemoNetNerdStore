@@ -19,7 +19,6 @@ public class CarrinhoCliente
     {
         if (!item.EhValido())
             return;
-
         item.AssociarItem(Id);
         if (CarrinhoItemExistente(item))
         {
@@ -30,6 +29,30 @@ public class CarrinhoCliente
         }
         Itens.Add(item);
         CalcularValorTotalCarrinho();
+    }
+
+    internal void AtualizarItem(CarrinhoItem item)
+    {
+        if (!item.EhValido()) 
+            return;
+        item.AssociarCarrinho(item.CarrinhoId);
+        CarrinhoItem itemExistente = ObterPorProdutoId(item.ProdutoId);
+        Itens.Remove(itemExistente);
+        Itens.Add(item);
+        CalcularValorTotalCarrinho();
+    }
+
+    internal void RemoverItem(CarrinhoItem item)
+    {
+        CarrinhoItem itemExistente = ObterPorProdutoId(item.ProdutoId);
+        Itens.Remove(itemExistente);
+        CalcularValorTotalCarrinho();
+    }
+
+    internal void AtualizarUnidades(CarrinhoItem item, int unidades)
+    {
+        item.AtualizarUnidades(unidades);
+        AtualizarItem(item);
     }
 
     internal void CalcularValorTotalCarrinho()

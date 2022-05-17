@@ -26,7 +26,13 @@ public class CarrinhoItem
 
     internal void AdicionarUnidades(int unidades)
         => Quantidade += unidades;
+
+    internal void AtualizarUnidades(int unidades)
+        => Quantidade = unidades;
     
     internal bool EhValido()
         => new ItemPedidoValidation().Validate(this).IsValid;
+
+    internal void AssociarCarrinho(Guid id)
+        => CarrinhoId = id;
 }
