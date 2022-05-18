@@ -31,7 +31,7 @@ public class CarrinhoItem
         => Quantidade = unidades;
     
     internal bool EhValido()
-        => new ItemPedidoValidation().Validate(this).IsValid;
+        => new ItemCarrinhoValidation().Validate(this).IsValid;
 
     internal void AssociarCarrinho(Guid id)
         => CarrinhoId = id;

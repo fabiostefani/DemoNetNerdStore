@@ -1,4 +1,8 @@
-﻿namespace Carrinho.API.Model;
+﻿using Carrinho.API.Model.Validacoes;
+using FluentValidation;
+using FluentValidation.Results;
+
+namespace Carrinho.API.Model;
 
 public class CarrinhoCliente
 {
@@ -7,6 +11,7 @@ public class CarrinhoCliente
     public Guid ClienteId { get; set; }
     public decimal ValorTotal { get; set; }
     public List<CarrinhoItem> Itens { get; set; } = new List<CarrinhoItem>();
+    public ValidationResult ValidationResult { get; set; }
 
     public CarrinhoCliente(Guid clienteId)
     {
@@ -17,8 +22,6 @@ public class CarrinhoCliente
 
     internal void AdicionarItem(CarrinhoItem item)
     {
-        if (!item.EhValido())
-            return;
         item.AssociarItem(Id);
         if (CarrinhoItemExistente(item))
         {
@@ -33,8 +36,6 @@ public class CarrinhoCliente
 
     internal void AtualizarItem(CarrinhoItem item)
     {
-        if (!item.EhValido()) 
-            return;
         item.AssociarCarrinho(item.CarrinhoId);
         CarrinhoItem itemExistente = ObterPorProdutoId(item.ProdutoId);
         Itens.Remove(itemExistente);
@@ -55,12 +56,36 @@ public class CarrinhoCliente
         AtualizarItem(item);
     }
 
+    internal bool EhValido()
+    {
+        List<ValidationFailure> erros = Itens.SelectMany(i => new ItemCarrinhoValidation().Validate(i).Errors).ToList();
+        erros.AddRange(new CarrinhoClienteValidation().Validate(this).Errors);
+        ValidationResult = new ValidationResult(erros);
+        return ValidationResult.IsValid;
+    }
+
     internal void CalcularValorTotalCarrinho()
         => ValorTotal = Itens.Sum(i => i.CalcularValor());
 
     internal bool CarrinhoItemExistente(CarrinhoItem item)
         => Itens.Any(i => i.ProdutoId == item.ProdutoId);
-    
+
     internal CarrinhoItem ObterPorProdutoId(Guid produtoId)
         => Itens.FirstOrDefault(p=>p.ProdutoId == produtoId);
+
+    public class CarrinhoClienteValidation : AbstractValidator<CarrinhoCliente>
+    {
+        public CarrinhoClienteValidation()
+        {
+            RuleFor(c => c.ClienteId)
+                .NotEqual(Guid.Empty)
+                .WithMessage("Cliente não reconhecido.");
+            RuleFor(c => c.Itens.Count)
+                .GreaterThan(0)
+                .WithMessage("O carrinho não possui itens.");
+            RuleFor(c => c.ValorTotal)
+                .GreaterThan(0)
+                .WithMessage("O valor total do carrinho precisa ser maior que 0.");
+        }
+    }
 }

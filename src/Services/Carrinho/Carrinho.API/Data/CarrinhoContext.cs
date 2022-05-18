@@ -1,5 +1,6 @@
 ﻿using Carrinho.API.Model;
 using Core.Utils;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace Carrinho.API.Data;
@@ -18,6 +19,7 @@ public sealed class CarrinhoContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Ignore<ValidationResult>();
         modelBuilder.AplicarConfiguracaoVarchar();
         modelBuilder.AplicarClientSetNullForeignKey();
         ConfiguracaoCarrinhoCliente(modelBuilder);
