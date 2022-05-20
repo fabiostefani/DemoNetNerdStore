@@ -19,5 +19,10 @@ namespace WebApp.MVC.Controllers
         private bool PossuiErros(ResponseResult response)
             => response is not null && response.Errors.Mensagens.Any();
 
+        protected void AdicionarErroValidacao(string mensagem)
+            => ModelState.AddModelError(string.Empty, mensagem);
+
+        protected bool OperacaoValida()
+            => ModelState.ErrorCount == 0;
     }
 }

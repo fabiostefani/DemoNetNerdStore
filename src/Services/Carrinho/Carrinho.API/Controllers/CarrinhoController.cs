@@ -37,7 +37,7 @@ public class CarrinhoController : MainController
             ManipularNovoCarrinho(item);
         else
             ManipularCarrinhoExistente(carrinho, item);
-        ValidarCarrinho(carrinho);
+        
         if (!OperacaoValida()) return CustomResponse();
         await PersistirDados();
         return CustomResponse();
@@ -88,6 +88,7 @@ public class CarrinhoController : MainController
     {
         var carrinho = new CarrinhoCliente(_aspNetUser.ObterUserId());
         carrinho.AdicionarItem(item);
+        ValidarCarrinho(carrinho);
         _context.CarrinhoClientes.Add(carrinho);
     }
     
@@ -95,6 +96,7 @@ public class CarrinhoController : MainController
     {
         bool produtoItemExistente = carrinho.CarrinhoItemExistente(item);
         carrinho.AdicionarItem(item);
+        ValidarCarrinho(carrinho);
         if (produtoItemExistente)
         {
             _context.CarrinhoItens.Update(carrinho.ObterPorProdutoId(item.ProdutoId));

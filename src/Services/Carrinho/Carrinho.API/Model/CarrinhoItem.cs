@@ -1,4 +1,5 @@
-﻿using Carrinho.API.Model.Validacoes;
+﻿using System.Text.Json.Serialization;
+using Carrinho.API.Model.Validacoes;
 
 namespace Carrinho.API.Model;
 
@@ -11,6 +12,7 @@ public class CarrinhoItem
     public decimal Valor { get; set; }
     public string Imagem { get; set; } = string.Empty;
     public Guid CarrinhoId { get; set; }
+    // [JsonIgnore]
     public CarrinhoCliente CarrinhoCliente { get; set; }
     
     public CarrinhoItem()

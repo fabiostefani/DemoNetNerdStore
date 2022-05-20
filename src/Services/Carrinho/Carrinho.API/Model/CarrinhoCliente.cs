@@ -1,10 +1,9 @@
 ﻿using Carrinho.API.Model.Validacoes;
-using FluentValidation;
 using FluentValidation.Results;
 
 namespace Carrinho.API.Model;
 
-public class CarrinhoCliente
+public partial class CarrinhoCliente
 {
     internal const int MAX_QUANTIDADE_ITEM = 15;
     public Guid Id { get; private set; }
@@ -72,20 +71,4 @@ public class CarrinhoCliente
 
     internal CarrinhoItem ObterPorProdutoId(Guid produtoId)
         => Itens.FirstOrDefault(p=>p.ProdutoId == produtoId);
-
-    public class CarrinhoClienteValidation : AbstractValidator<CarrinhoCliente>
-    {
-        public CarrinhoClienteValidation()
-        {
-            RuleFor(c => c.ClienteId)
-                .NotEqual(Guid.Empty)
-                .WithMessage("Cliente não reconhecido.");
-            RuleFor(c => c.Itens.Count)
-                .GreaterThan(0)
-                .WithMessage("O carrinho não possui itens.");
-            RuleFor(c => c.ValorTotal)
-                .GreaterThan(0)
-                .WithMessage("O valor total do carrinho precisa ser maior que 0.");
-        }
-    }
 }
