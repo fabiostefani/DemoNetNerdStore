@@ -11,9 +11,9 @@ public class CarrinhoItem
     public int Quantidade { get; set; }
     public decimal Valor { get; set; }
     public string Imagem { get; set; } = string.Empty;
-    public Guid CarrinhoId { get; set; }
-    // [JsonIgnore]
-    public CarrinhoCliente CarrinhoCliente { get; set; }
+    public Guid? CarrinhoId { get; set; }
+    [JsonIgnore]
+    public CarrinhoCliente? CarrinhoCliente { get; set; }
     
     public CarrinhoItem()
     {

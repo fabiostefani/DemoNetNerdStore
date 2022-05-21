@@ -23,7 +23,8 @@ namespace WebApp.MVC.Services
             {
                 PropertyNameCaseInsensitive = true
             };
-            return JsonSerializer.Deserialize<T>(await responseMessage.Content.ReadAsStringAsync(), options);
+            var msg = await responseMessage.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<T>(msg, options);
         }
 
         protected bool TratarErrosResponse(HttpResponseMessage responseMessage)

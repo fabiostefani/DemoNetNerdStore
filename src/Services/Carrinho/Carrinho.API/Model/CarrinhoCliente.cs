@@ -35,7 +35,7 @@ public partial class CarrinhoCliente
 
     internal void AtualizarItem(CarrinhoItem item)
     {
-        item.AssociarCarrinho(item.CarrinhoId);
+        item.AssociarCarrinho(item.CarrinhoId.Value);
         CarrinhoItem itemExistente = ObterPorProdutoId(item.ProdutoId);
         Itens.Remove(itemExistente);
         Itens.Add(item);

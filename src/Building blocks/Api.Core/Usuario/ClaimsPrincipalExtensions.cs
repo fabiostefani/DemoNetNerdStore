@@ -10,7 +10,7 @@ public static class ClaimsPrincipalExtensions
         {
             throw new ArgumentException(nameof(principal));
         }
-        var claim = principal.FindFirst("sub");
+        var claim = principal.FindFirst(ClaimTypes.NameIdentifier);
         if (claim == null)
             throw new Exception("Erro obtendo o Claim UserId");            
         return claim.Value;
