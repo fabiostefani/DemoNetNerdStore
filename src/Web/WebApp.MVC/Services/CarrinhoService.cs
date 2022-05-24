@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Core.Communication;
+using Microsoft.Extensions.Options;
 using WebApp.MVC.Extensions;
 using WebApp.MVC.Models;
 

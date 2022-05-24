@@ -1,4 +1,5 @@
-﻿using WebApp.MVC.Models;
+﻿using Core.Communication;
+using WebApp.MVC.Models;
 
 namespace WebApp.MVC.Services;
 

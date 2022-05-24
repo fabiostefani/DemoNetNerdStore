@@ -1,3 +1,4 @@
+using Core.Communication;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.MVC.Models;
 

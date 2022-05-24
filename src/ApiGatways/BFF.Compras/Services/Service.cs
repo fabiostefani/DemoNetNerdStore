@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Core.Communication;
 
 namespace BFF.Compras.Services;
 using System.Text;
@@ -15,14 +16,14 @@ public abstract class Service
         );
     }
 
-    protected async Task<T?> DeserializarObjetoResponse<T>(HttpResponseMessage responseMessage)
+    protected async Task<T> DeserializarObjetoResponse<T>(HttpResponseMessage responseMessage) where T : new()
     {
         var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
         var msg = await responseMessage.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<T>(msg, options);
+        return JsonSerializer.Deserialize<T>(msg, options) ?? RetornoOk<T>();
     }
 
     protected bool TratarErrosResponse(HttpResponseMessage response)
@@ -31,5 +32,11 @@ public abstract class Service
         response.EnsureSuccessStatusCode();
         return true;
     }
+
+    protected ResponseResult RetornoOk()
+        => new ResponseResult();
+    
+    protected T RetornoOk<T>() where T : new()
+        => new T();
 
 }

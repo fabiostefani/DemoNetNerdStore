@@ -1,3 +1,5 @@
+using Core.Communication;
+
 namespace WebApp.MVC.Models
 {
     public class UsuarioRespostaLogin
