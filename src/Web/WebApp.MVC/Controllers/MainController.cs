@@ -6,9 +6,9 @@ namespace WebApp.MVC.Controllers
 {
     public class MainController : Controller
     {
-        protected bool ResponsePossuiErros(ResponseResult response)
+        protected bool ResponsePossuiErros(ResponseResult? response)
         {
-            ArgumentNullException.ThrowIfNull(response, "Resposta do Login Inválida.");            
+            ArgumentNullException.ThrowIfNull(response, "Resposta Inválida.");            
             if (!PossuiErros(response)) return false;
             response.Errors.Mensagens.ForEach
             (
@@ -17,7 +17,7 @@ namespace WebApp.MVC.Controllers
             return true;            
         }
 
-        private bool PossuiErros(ResponseResult response)
+        private bool PossuiErros(ResponseResult? response)
             => response is not null && response.Errors.Mensagens.Any();
 
         protected void AdicionarErroValidacao(string mensagem)

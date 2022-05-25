@@ -24,7 +24,7 @@ namespace WebApp.MVC.Configuration
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegationHandler>()
                 .AddPolicyHandler(PollyExtensions.EsperarTentar())
                 .AddTransientHttpErrorPolicy(polly => polly.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
-            services.AddHttpClient<ICarrinhoService, CarrinhoService>()
+            services.AddHttpClient<IComprasBffService, ComprasBffService>()
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegationHandler>()
                 .AddPolicyHandler(PollyExtensions.EsperarTentar())
                 .AddTransientHttpErrorPolicy(polly => polly.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));

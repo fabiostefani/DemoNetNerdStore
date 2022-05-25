@@ -18,7 +18,7 @@ namespace WebApp.MVC.Controllers
         [Route("vitrine")]
         public async Task<IActionResult> Index()
         {
-            IEnumerable<ProdutoViewModel>? produtos = await _catalogoService.ObterTodos();
+            IEnumerable<ProdutoViewModel> produtos = await _catalogoService.ObterTodos();
             return View(produtos);
         }
 

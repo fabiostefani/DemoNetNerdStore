@@ -45,7 +45,7 @@ namespace WebApp.MVC.Services
             return true;
         }
 
-        protected ResponseResult RetornoOk()
+        protected ResponseResult? RetornoOk()
             => new ResponseResult();
     }
 }
