@@ -1,4 +1,5 @@
 ﻿using Api.Core.Controllers;
+using BFF.Compras.Models;
 using BFF.Compras.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,35 +23,67 @@ public class CarrinhoController : MainController
     [Route("compras/carrinho")]
     public async Task<IActionResult> Index()
     {
-        return CustomResponse();
+        return CustomResponse(await _carrinhoService.ObterCarrinho());
     }
     
     [HttpGet]
     [Route("compras/carrinho-quantidade")]
-    public async Task<IActionResult> ObterQuantidadeCarrinho()
+    public async Task<int> ObterQuantidadeCarrinho()
     {
-        return CustomResponse();
+        var quantidade = await _carrinhoService.ObterCarrinho();
+        return quantidade?.Itens.Sum(x => x.Quantidade) ?? 0;
     }
     
     [HttpPost]
     [Route("compras/carrinho/items")]
-    public async Task<IActionResult> AdicionarItemCarrinho()
+    public async Task<IActionResult> AdicionarItemCarrinho(ItemCarrinhoDto itemProduto)
     {
-        return CustomResponse();
+        var produto = await _catalogoService.ObterPorId(itemProduto.ProdutoId);
+        if (!OperacaoValida()) return CustomResponse();
+        AtualizarInformacoesProduto();
+        var resposta = await _carrinhoService.AdicionarItemCarrinho(itemProduto);
+        return CustomResponse(resposta);
+        
+        void AtualizarInformacoesProduto()
+        {
+            itemProduto.Nome = produto.Nome;
+            itemProduto.Valor = produto.Valor;
+            itemProduto.Imagem = produto.Imagem;
+        }
     }
-    
+
     [HttpPut]
     [Route("compras/carrinho/items/{produtoId}")]
-    public async Task<IActionResult> AtualizarItemCarrinho(Guid produtoId)
+    public async Task<IActionResult> AtualizarItemCarrinho(Guid produtoId, ItemCarrinhoDto itemProduto)
     {
-        return CustomResponse();
+        var produto = await _catalogoService.ObterPorId(produtoId);
+        await ValidarItemCarrinho(produto, itemProduto.Quantidade);
+        if (!OperacaoValida()) return CustomResponse();
+        var resposta = await _carrinhoService.AtualizarItemCarrinho(produtoId, itemProduto);
+        return CustomResponse(resposta);
     }
     
     [HttpDelete]
     [Route("compras/carrinho/items/{produtoId}")]
     public async Task<IActionResult> DeletarItemCarrinho(Guid produtoId)
     {
-        return CustomResponse();
+        var respota = await _carrinhoService.RemoverItemCarrinho(produtoId);
+        return CustomResponse(respota);
+    }
+
+    private async Task ValidarItemCarrinho(ItemProdutoDto? produto, int quantidade)
+    {
+        if (produto == null) AdicionarErroProcessamento("Produto inexistente!");
+        if (quantidade < 1) AdicionarErroProcessamento($"Escolha ao menos uma unidade do produto {produto?.Nome}");
+        var carrinho = await _carrinhoService.ObterCarrinho();
+        var itemCarrinho = carrinho.Itens.FirstOrDefault(p => p.ProdutoId == produto?.Id);
+        if (itemCarrinho != null && itemCarrinho.Quantidade + quantidade > produto?.QuantidadeEstoque)
+        {
+            AdicionarErroProcessamento($"O produto {produto?.Nome} possui {produto?.QuantidadeEstoque} unidades em estoque, você selecionou {quantidade}");
+            return;
+        }
+        if (quantidade > produto?.QuantidadeEstoque)
+            AdicionarErroProcessamento($"O produto {produto?.Nome} possui {produto?.QuantidadeEstoque} unidades em estoque, você selecionou {quantidade}");
     }
 
 }
