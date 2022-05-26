@@ -40,7 +40,7 @@ public class AspNetUser : IAspNetUser
     {
         return EstaAutenticado()
             ? _accessor.ValidarHttpContext().ValidarUser().GetUserEmail()
-            : string.Empty;
+            : "";
     }
 
     public Guid ObterUserId()
@@ -57,7 +57,7 @@ public class AspNetUser : IAspNetUser
     {
         return EstaAutenticado()
             ? _accessor.ValidarHttpContext().ValidarUser().GetUserToken()
-            : string.Empty;
+            : "";
     }
 
     public bool? PossuiRole(string role)

@@ -16,27 +16,23 @@ public static class ClaimsPrincipalExtensions
         return claim.Value;
     }
 
-    public static string GetUserEmail(this ClaimsPrincipal principal)
+    public static string? GetUserEmail(this ClaimsPrincipal principal)
     {
         if (principal == null)
         {
             throw new ArgumentException(nameof(principal));
         }
         var claim = principal.FindFirst("email");
-        if (claim == null)
-            throw new Exception("Erro obtendo o Claim Email");            
-        return claim.Value;
+        return claim?.Value;
     }
 
-    public static string GetUserToken(this ClaimsPrincipal principal)
+    public static string? GetUserToken(this ClaimsPrincipal principal)
     {
         if (principal == null)
         {
             throw new ArgumentException(nameof(principal));
         }
         var claim = principal.FindFirst("JWT");
-        if (claim == null)
-            throw new Exception("Erro obtendo o Claim JWT");            
-        return claim.Value;
+        return claim?.Value;
     }
 }

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Pedido.API.Controllers;
+namespace Pedidos.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]

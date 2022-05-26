@@ -1,4 +1,4 @@
-namespace Pedido.API;
+namespace Pedidos.API;
 
 public class WeatherForecast
 {
