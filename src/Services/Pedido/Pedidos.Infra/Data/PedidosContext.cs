@@ -5,6 +5,7 @@ using Core.Message;
 using Core.Utils;
 using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
+using Pedidos.Domain.Vouchers;
 
 namespace Pedidos.Infra.Data;
 
@@ -16,6 +17,8 @@ public class PedidosContext : DbContext, IUnitOfWork
     {
         _mediatorHandler = mediatorHandler;
     }
+
+    public DbSet<Voucher> Vouchers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
