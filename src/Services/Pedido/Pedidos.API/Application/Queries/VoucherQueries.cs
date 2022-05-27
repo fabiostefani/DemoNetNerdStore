@@ -13,7 +13,9 @@ public class VoucherQueries : IVoucherQueries
     public async Task<VoucherDto?> ObterVoucherPorCodigo(string codigo)
     {
         var voucher = await _voucherRepository.ObterVoucherPorCodigo(codigo);
-        if (voucher == null) return null;
+        if (voucher is null) return null;
+        if (!voucher.EstaValidoParaUtilizacao()) return null;
+        
         return new VoucherDto()
         {
             Codigo = voucher.Codigo,

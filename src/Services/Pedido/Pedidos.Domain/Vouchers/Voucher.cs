@@ -1,4 +1,5 @@
 ﻿using Core.DomainObjects;
+using Pedidos.Domain.Vouchers.Specs;
 
 namespace Pedidos.Domain.Vouchers;
 
@@ -14,4 +15,18 @@ public class Voucher : Entity, IAggregateRoot
     public DateTime DataValidade { get; private set; }
     public bool Ativo { get; private set; }
     public bool Utilizado { get; private set; }
+
+    public bool EstaValidoParaUtilizacao()
+        => new VoucherAtivoSpecification()
+            .And(new VoucherDataSpecification())
+            .And(new VoucherQuantidadeDisponivel())
+            .IsSatisfiedBy(this);
+    
+
+    public void MarcarComoUtilizado()
+    {
+        Ativo = false;
+        Utilizado = true;
+        Quantidade = 0;
+    }
 }
