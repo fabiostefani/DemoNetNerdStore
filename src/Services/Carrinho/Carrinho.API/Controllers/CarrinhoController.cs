@@ -79,6 +79,23 @@ public class CarrinhoController : MainController
         return CustomResponse();
     }
 
+    [HttpPost]
+    [Route("carrinho/aplicar-voucher")]
+    public async Task<IActionResult> AplicarVoucher(Voucher voucher)
+    {
+        var carrinho = await ObterCarrinhoCliente();
+        if (carrinho is null) 
+        {
+            AdicionarErroProcessamento("Não foi possível obter o carrinho do cliente.");
+            return CustomResponse();
+        }
+        carrinho?.AplicarVoucher(voucher);
+        _context.CarrinhoClientes.Update(carrinho);
+        var result = await _context.SaveChangesAsync();
+        if (result <= 0) AdicionarErroProcessamento("Não foi possível persistir os dados no banco");
+        return CustomResponse();
+    }
+
     private async Task<CarrinhoCliente?> ObterCarrinhoCliente()
         => await _context.CarrinhoClientes
             .Include(c => c.Itens)
