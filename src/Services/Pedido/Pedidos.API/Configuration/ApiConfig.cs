@@ -20,7 +20,7 @@ public static class ApiConfig
                         .AllowAnyMethod()
                         .AllowAnyHeader());
         });
-        services.AddEndpointsApiExplorer();
+        // services.AddEndpointsApiExplorer();
     }
 
     public static void UseApiConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
@@ -33,9 +33,9 @@ public static class ApiConfig
         app.UseRouting();
         app.UseCors("Total");
         app.UseAuthConfiguration();
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        // app.UseEndpoints(endpoints =>
+        // {
+        //     endpoints.MapControllers();
+        // });
     }
 }

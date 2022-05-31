@@ -12,6 +12,7 @@ builder.Services.RegisterServices();
 builder.Services.AddMessageBusConfiguration(builder.Configuration);
 var app = builder.Build();
 
+app.UseApiConfiguration(app.Environment);
 app.UseSwaggerConfiguration();
-app.UseApiConfiguration(builder.Environment);
+app.MapControllers();
 app.Run();

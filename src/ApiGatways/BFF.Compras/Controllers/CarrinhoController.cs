@@ -7,20 +7,23 @@ using RabbitMQ.Client;
 
 namespace BFF.Compras.Controllers;
 
-[Authorize]
+// [Authorize]
 public class CarrinhoController : MainController
 {
     private readonly ICarrinhoService _carrinhoService;
     private readonly ICatalogoService _catalogoService;
     private readonly IPedidoService _pedidoService;
+    private readonly ILogger<CarrinhoController> _logger;
 
     public CarrinhoController(ICarrinhoService carrinhoService,
                               ICatalogoService catalogoService,
-                              IPedidoService pedidoService)
+                              IPedidoService pedidoService,
+                              ILogger<CarrinhoController> logger)
     {
         _carrinhoService = carrinhoService;
         _catalogoService = catalogoService;
         _pedidoService = pedidoService;
+        _logger = logger;
     }
     
     [HttpGet]
@@ -28,6 +31,7 @@ public class CarrinhoController : MainController
     public async Task<IActionResult> Index()
     {
         return CustomResponse(await _carrinhoService.ObterCarrinho());
+        return Ok();
     }
     
     [HttpGet]
@@ -75,10 +79,10 @@ public class CarrinhoController : MainController
         return CustomResponse(respota);
     }
     
-    [HttpPost("compras/carrinho/aplicar-voucher")]
+    [HttpPost("/compras/carrinho/aplicar-voucher")]
     public async Task<IActionResult> AplicarVoucher([FromBody] string voucherCodigo)
     {
-        var voucher = await _pedidoService.ObterVocuherPorCodigo(voucherCodigo);
+        var voucher = await _pedidoService.ObterVoucherPorCodigo(voucherCodigo);
         if (voucher is null)
         {
             AdicionarErroProcessamento("Voucher inválido ou não encontrado.");

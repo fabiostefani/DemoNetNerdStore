@@ -15,7 +15,7 @@ namespace Api.Core.Identidade
             services.Configure<AppSettings>(appSettingsSecction);
             AppSettings appSettings = appSettingsSecction.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Segredo);
-
+            
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

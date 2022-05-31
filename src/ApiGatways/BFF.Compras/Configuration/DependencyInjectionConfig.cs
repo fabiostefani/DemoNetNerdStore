@@ -22,6 +22,10 @@ public static class DependencyInjectionConfig
             .AddHttpMessageHandler<HttpClientAuthorizationDelegationHandler>()
             .AddPolicyHandler(PollyExtensions.EsperarTentar())
             .AddTransientHttpErrorPolicy(polly => polly.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+        services.AddHttpClient<IPedidoService, PedidoService>()
+            .AddHttpMessageHandler<HttpClientAuthorizationDelegationHandler>()
+            .AddPolicyHandler(PollyExtensions.EsperarTentar())
+            .AddTransientHttpErrorPolicy(polly => polly.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
     }
 }
