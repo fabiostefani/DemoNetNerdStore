@@ -21,7 +21,10 @@ public class Voucher : Entity, IAggregateRoot
             .And(new VoucherDataSpecification())
             .And(new VoucherQuantidadeDisponivel())
             .IsSatisfiedBy(this);
-    
+
+    public bool DescontoPorPorcentagem()
+        => TipoDesconto == TipoDescontoVoucher.Porcentagem;
+        
 
     public void MarcarComoUtilizado()
     {
