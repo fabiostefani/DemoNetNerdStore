@@ -5,11 +5,11 @@ namespace Pedidos.Domain.Pedidos;
 
 public class Pedido : Entity, IAggregateRoot
 {
-    public Pedido(Guid clienteId,  decimal valorTotal, List<PedidoItem> pedidoItems, bool voucherUtilizado = false , decimal desconto = 0,  Guid? voucherId = null)
+    public Pedido(Guid clienteId,  decimal valorTotal, List<PedidoItem> pedidoItens, bool voucherUtilizado = false , decimal desconto = 0,  Guid? voucherId = null)
     {
         ClienteId = clienteId;
         ValorTotal = valorTotal;
-        _pedidoItems = pedidoItems;
+        _pedidoItens = pedidoItens;
         Desconto = desconto;
         VoucherUtilizado = voucherUtilizado;
         VoucherId = voucherId;
@@ -25,8 +25,8 @@ public class Pedido : Entity, IAggregateRoot
     public decimal ValorTotal { get; private set; }
     public DateTime DataCadastro { get; private set; }
     public PedidoStatus PedidoStatus { get; private set; }
-    private readonly List<PedidoItem> _pedidoItems;
-    public IReadOnlyCollection<PedidoItem> PedidoItems => _pedidoItems;
+    private readonly List<PedidoItem> _pedidoItens;
+    public IReadOnlyCollection<PedidoItem> PedidoItens => _pedidoItens;
     public Endereco Endereco { get; set; }
     public Voucher Voucher { get; set; }
 
@@ -45,7 +45,7 @@ public class Pedido : Entity, IAggregateRoot
 
     public void CalcularValorPedido()
     {
-        ValorTotal = PedidoItems.Sum(x => x.CalcularValor());
+        ValorTotal = PedidoItens.Sum(x => x.CalcularValor());
         CalcularValorTotalDesconto();
     }
 

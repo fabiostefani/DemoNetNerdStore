@@ -30,7 +30,7 @@ public class PedidoMapping : IEntityTypeConfiguration<Pedido>
         builder.Property(p => p.Codigo)
             .HasDefaultValueSql("nextval('minhasequencia')");
 
-        builder.HasMany(p => p.PedidoItems)
+        builder.HasMany(p => p.PedidoItens)
             .WithOne(p => p.Pedido)
             .HasForeignKey(p => p.PedidoId);
 

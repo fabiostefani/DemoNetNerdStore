@@ -20,7 +20,7 @@ public class PedidoRepository : IPedidoRepository
     public async Task<IEnumerable<Pedido>> ObterListaPorClienteId(Guid clienteId)
     {
         return await _context.Pedidos
-            .Include(p => p.PedidoItems)
+            .Include(p => p.PedidoItens)
             .AsNoTracking()
             .Where(p => p.ClienteId == clienteId)
             .ToListAsync();
