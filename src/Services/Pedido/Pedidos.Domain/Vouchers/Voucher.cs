@@ -19,7 +19,7 @@ public class Voucher : Entity, IAggregateRoot
     public bool EstaValidoParaUtilizacao()
         => new VoucherAtivoSpecification()
             .And(new VoucherDataSpecification())
-            .And(new VoucherQuantidadeDisponivel())
+            .And(new VoucherQuantidadeSpecification())
             .IsSatisfiedBy(this);
 
     public bool DescontoPorPorcentagem()
@@ -31,5 +31,12 @@ public class Voucher : Entity, IAggregateRoot
         Ativo = false;
         Utilizado = true;
         Quantidade = 0;
+    }
+
+    public void DebitarQuantidade()
+    {
+        Quantidade -= 1;
+        if (Quantidade >= 1) return;
+        MarcarComoUtilizado();
     }
 }

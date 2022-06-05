@@ -8,7 +8,7 @@ namespace Core.DomainObjects
         private List<Event> _notificacoes;
         public IReadOnlyCollection<Event>? Notificacoes => _notificacoes?.AsReadOnly();
 
-        public void AdicioanrEvento(Event evento)
+        public void AdicionarEvento(Event evento)
         {
             _notificacoes = _notificacoes ?? new List<Event>();
             _notificacoes.Add(evento);

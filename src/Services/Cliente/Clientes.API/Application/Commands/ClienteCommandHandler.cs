@@ -24,7 +24,7 @@ public class ClienteCommandHandler : CommandHandler, IRequestHandler<RegistrarCl
             return ValidationResult;
         }
         _clienteRepository.Adicionar(cliente);
-        cliente.AdicioanrEvento(new ClienteRegistradoEvent(message.Id, message.Nome, message.Email, message.Email));
+        cliente.AdicionarEvento(new ClienteRegistradoEvent(message.Id, message.Nome, message.Email, message.Email));
         return await PersistirDados(_clienteRepository.UnitOfWork);
     }
 }

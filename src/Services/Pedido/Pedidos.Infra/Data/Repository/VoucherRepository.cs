@@ -20,6 +20,9 @@ public class VoucherRepository : IVoucherRepository
     public async Task<Voucher?> ObterVoucherPorCodigo(string codigo)
         => await _context.Vouchers.FirstOrDefaultAsync(v => Equals(v.Codigo, codigo));
 
+    public void Atualizar(Voucher voucher)
+        => _context.Vouchers.Update(voucher);
+
     public void Dispose()
         => _context.Dispose();
 

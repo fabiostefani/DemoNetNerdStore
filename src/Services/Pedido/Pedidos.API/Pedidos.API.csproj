@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Application\Events" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\Building blocks\Api.Core\Api.Core.csproj" />
     <ProjectReference Include="..\..\..\Building blocks\MessageBus\MessageBus.csproj" />
     <ProjectReference Include="..\Pedidos.Infra\Pedidos.Infra.csproj" />
