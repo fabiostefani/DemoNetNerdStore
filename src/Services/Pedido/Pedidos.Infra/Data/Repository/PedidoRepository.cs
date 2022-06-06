@@ -1,4 +1,5 @@
-﻿using Core.Data;
+﻿using System.Data.Common;
+using Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Pedidos.Domain.Pedidos;
 
@@ -36,6 +37,9 @@ public class PedidoRepository : IPedidoRepository
         _context.Pedidos.Update(pedido);
     }
 
+    public DbConnection ObterConexao()
+        => _context.Database.GetDbConnection();
+    
     public async Task<PedidoItem?> ObterItemPorId(Guid id)
     {
         return await _context.PedidoItems.FindAsync(id);
