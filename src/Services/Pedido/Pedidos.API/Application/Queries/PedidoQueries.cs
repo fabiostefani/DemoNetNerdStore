@@ -35,13 +35,8 @@ public class PedidoQueries : IPedidoQueries
                                 and p.'DataCadastro' between now() + '3 minutes' and now()
                                 ORDER BY p.'DataCadastro'  DESC";
         var pedido = await _pedidoRepository.ObterConexao()
-            .QueryAsync<PedidoDto, PedidoItemDto, EnderecoDto, PedidoDto>(sql, (p, pi, e) =>
-            {
-               p.PedidoItens.Add(pi);
-               p.Endereco = e;
-               return p;
-            }, new {clienteId});
-        return MapearPedido();
+            .QueryAsync<dynamic>(sql, new {clienteId});
+        return MapearPedido(pedido);
     }
 
     public async Task<IEnumerable<PedidoDto>> ObterListaPorClienteId(Guid clienteId)
@@ -50,6 +45,42 @@ public class PedidoQueries : IPedidoQueries
         return pedidos.Select(PedidoDto.ParaPedidoDto);
     }
 
-    private PedidoDto MapearPedido()
-        => new PedidoDto();
+    private PedidoDto MapearPedido(dynamic result)
+    {
+        var pedido = new PedidoDto
+        {
+            Codigo = result[0].CODIGO,
+            Status = result[0].PEDIDOSTATUS,
+            ValorTotal = result[0].VALORTOTAL,
+            Desconto = result[0].DESCONTO,
+            VoucherUtilizado = result[0].VOUCHERUTILIZADO,
+
+            PedidoItens = new List<PedidoItemDto>(),
+            Endereco = new EnderecoDto
+            {
+                Logradouro = result[0].LOGRADOURO,
+                Bairro = result[0].BAIRRO,
+                Cep = result[0].CEP,
+                Cidade = result[0].CIDADE,
+                Complemento = result[0].COMPLEMENTO,
+                Estado = result[0].ESTADO,
+                Numero = result[0].NUMERO
+            }
+        };
+
+        foreach (var item in result)
+        {
+            var pedidoItem = new PedidoItemDto()
+            {
+                Nome = item.PRODUTONOME,
+                Valor = item.VALORUNITARIO,
+                Quantidade = item.QUANTIDADE,
+                Imagem = item.PRODUTOIMAGEM
+            };
+
+            pedido.PedidoItens.Add(pedidoItem);
+        }
+
+        return pedido;  
+    } 
 }
