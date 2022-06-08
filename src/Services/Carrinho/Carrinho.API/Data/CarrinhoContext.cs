@@ -21,7 +21,11 @@ public sealed class CarrinhoContext : DbContext
     {
         modelBuilder.Ignore<ValidationResult>();
         modelBuilder.AplicarConfiguracaoVarchar();
-        modelBuilder.AplicarClientSetNullForeignKey();
+        foreach (var relationShip in modelBuilder.Model.GetEntityTypes()
+                     .SelectMany(e=>e.GetForeignKeys()))
+        {
+            relationShip.DeleteBehavior = DeleteBehavior.Cascade;
+        }
         ConfiguracaoCarrinhoCliente(modelBuilder);
         ConfiguracaoCarrinhoItem(modelBuilder);
     }

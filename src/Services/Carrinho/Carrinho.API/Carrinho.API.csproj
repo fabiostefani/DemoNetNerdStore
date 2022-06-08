@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Building blocks\Api.Core\Api.Core.csproj" />
     <ProjectReference Include="..\..\..\building blocks\Core\Core.csproj" />
+    <ProjectReference Include="..\..\..\Building blocks\MessageBus\MessageBus.csproj" />
   </ItemGroup>
 
 </Project>
