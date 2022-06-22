@@ -16,6 +16,7 @@ public static class DependencyInjectionConfig
     {
         services.AddScoped<IMediatorHandler, MediatorHandler>();
         services.AddScoped<IRequestHandler<RegistrarClienteCommand, ValidationResult>, ClienteCommandHandler>();
+        services.AddScoped<IRequestHandler<AdicionarEnderecoCommand, ValidationResult>, ClienteCommandHandler>();
         services.AddScoped<INotificationHandler<ClienteRegistradoEvent>, ClienteEventHandler>();
         services.AddScoped<IClienteRepository, ClienteRepository>();
         services.AddScoped<ClientesContext>();

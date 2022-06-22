@@ -11,4 +11,8 @@ public interface IComprasBffService
     Task<ResponseResult?> AtualizarItemCarrinho(Guid produtoId, ItemCarrinhoViewModel carrinho);
     Task<ResponseResult?> RemoverItemCarrinho(Guid produtoId);
     Task<ResponseResult?> AplicarVoucherCarrinho(string voucher);
+    PedidoTransacaoViewModel MapearParaPedido(CarrinhoViewModel carrinho, EnderecoViewModel endereco);
+    Task<ResponseResult> FinalizarPedido(PedidoTransacaoViewModel pedidoTransacao);
+    Task<PedidoViewModel> ObterUltimoPedido();
+    Task<IEnumerable<PedidoViewModel>> ObterListaPorClienteId();
 }
