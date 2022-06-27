@@ -12,7 +12,7 @@ public class ClienteService : Service, IClienteService
 
     public ClienteService(HttpClient httpClient, IOptions<AppSettings> settings)
     {
-        if (string.IsNullOrEmpty(settings.Value.ClienteUrl)) 
+        if (!string.IsNullOrEmpty(settings.Value.ClienteUrl)) 
             httpClient.BaseAddress = new Uri(settings.Value.ClienteUrl);
         _httpClient = httpClient;
     }
