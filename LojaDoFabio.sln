@@ -37,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clientes.API", "src\service
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pagamento", "Pagamento", "{083EC39B-0BF0-40CD-9349-58408B535747}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pagamento.API", "src\services\Pagamento\Pagamento.API\Pagamento.API.csproj", "{AE00A9AE-B105-460A-8ED3-0AF04C67D0E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pagamentos.API", "src\services\Pagamento\Pagamentos.API\Pagamentos.API.csproj", "{AE00A9AE-B105-460A-8ED3-0AF04C67D0E1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pedido", "Pedido", "{B07D4987-1291-47BD-9E12-3FB8509505BD}"
 EndProject

@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 
-namespace Clientes.API.Configuration;
+namespace Pagamentos.API.Configuration;
 
 public static class SwaggerConfig
 {
@@ -11,8 +11,8 @@ public static class SwaggerConfig
             opt.SwaggerDoc(name: "v1", new OpenApiInfo
             {
                 Version = "v1",
-                Title = "Loja do Fabio Enterprise Cliente API",
-                Description = "Clientes",
+                Title = "Loja do Fabio Enterprise Pagamento API",
+                Description = "Pagamentos",
                 Contact = new OpenApiContact() { Name = "Fabio de Stefani", Email = "fabiostefani@gmail.com" },
                 License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
             });

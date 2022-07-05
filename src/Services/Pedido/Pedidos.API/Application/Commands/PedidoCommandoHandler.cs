@@ -1,7 +1,9 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 using Core.Message;
+using Core.Message.Integration;
 using FluentValidation.Results;
 using MediatR;
+using MessageBus;
 using Pedidos.API.Application.Dtos;
 using Pedidos.API.Application.Events;
 using Pedidos.Domain.Pedidos;
@@ -15,12 +17,15 @@ public class PedidoCommandoHandler : CommandHandler,
 {
     private readonly IVoucherRepository _voucherRepository;
     private readonly IPedidoRepository _pedidoRepository;
+    private readonly IMessageBus _messageBus;
 
     public PedidoCommandoHandler(IVoucherRepository voucherRepository,
-                                 IPedidoRepository pedidoRepository)
+                                 IPedidoRepository pedidoRepository,
+                                 IMessageBus messageBus)
     {
         _voucherRepository = voucherRepository;
         _pedidoRepository = pedidoRepository;
+        _messageBus = messageBus;
     }
     public async Task<ValidationResult> Handle(AdicionarPedidoCommand message, CancellationToken cancellationToken)
     {
@@ -28,7 +33,7 @@ public class PedidoCommandoHandler : CommandHandler,
         var pedido = MapearPedido(message);
         if (!await AplicarVoucher(message, pedido)) return ValidationResult;
         if (!ValidarPedido(pedido)) return ValidationResult;
-        if (!ProcessarPagamento(pedido)) return ValidationResult;
+        if (!await ProcessarPagamento(pedido, message)) return ValidationResult;
         pedido.AutorizarPedido();
         pedido.AdicionarEvento(new PedidoRealizadoEvent(pedido.Id, pedido.ClienteId));
         _pedidoRepository.Adicionar(pedido);
@@ -93,6 +98,29 @@ public class PedidoCommandoHandler : CommandHandler,
         return true;
     }
 
-    private bool ProcessarPagamento(Pedido pedido)
-        => true;
+    private async Task<bool> ProcessarPagamento(Pedido pedido, AdicionarPedidoCommand message)
+    {
+        var pedidoIniciado = new PedidoIniciadoIntegrationEvent
+        {
+            PedidoId = pedido.Id,
+            ClienteId = pedido.ClienteId,
+            Valor = pedido.ValorTotal,
+            TipoPagamento = 1,
+            NomeCartao = message.NomeCartao,
+            Cvv = message.CvvCartao,
+            NumeroCartao = message.NumeroCartao,
+            MesAnoVencimento = message.ExpiracaoCartao
+        };
+        var result = await _messageBus.RequestAsync<PedidoIniciadoIntegrationEvent, ResponseMessage>(pedidoIniciado);
+
+        if (result.ValidationResult.IsValid) return true;
+
+        foreach (var error in result.ValidationResult.Errors)
+        {
+            AdicionarErro(error.ErrorMessage);
+        }
+        
+        return false;
+    }
+        
 }
