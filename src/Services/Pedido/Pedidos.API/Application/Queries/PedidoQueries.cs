@@ -45,6 +45,30 @@ public class PedidoQueries : IPedidoQueries
         return pedidos.Select(PedidoDto.ParaPedidoDto);
     }
 
+    public async Task<PedidoDto> ObterPedidosAutorizados()
+    {
+        const string sql = @"select p.'Id' as 'PedidoId',
+                                    p.'Id',
+                                    p.'ClienteId',
+                                    pi2.'Id' as 'PedidoItemId',
+                                    pi2.'Id',
+                                    pi2.'ProdutoId',
+                                    pi2.'Quantidade'
+                                    from 'Pedidos' p 
+                                        inner join 'PedidoItems' pi2 on p.'Id' = pi2.'PedidoId' 
+                                    where p.'PedidoStatus' = 1
+                                    order by p.'DataCadastro' 
+                                    limit 1";
+        var pedido = await _pedidoRepository.ObterConexao().QueryAsync<PedidoDto, PedidoItemDto, PedidoDto>(sql,
+            (p, pi) =>
+            {
+                p.PedidoItens = new List<PedidoItemDto>();
+                p.PedidoItens.Add(pi);
+                return p;
+            }, splitOn: "PedidoId,PedidoItemId");
+        return pedido.FirstOrDefault();
+    }
+
     private PedidoDto MapearPedido(dynamic result)
     {
         var pedido = new PedidoDto
