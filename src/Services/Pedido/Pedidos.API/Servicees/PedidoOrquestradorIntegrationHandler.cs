@@ -1,4 +1,6 @@
-﻿using Pedidos.API.Application.Queries;
+﻿using Core.Message.Integration;
+using MessageBus;
+using Pedidos.API.Application.Queries;
 
 namespace Pedidos.API.Servicees;
 
@@ -18,7 +20,7 @@ public class PedidoOrquestradorIntegrationHandler : IHostedService, IDisposable
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Serviço de pedido iniciado");
-        _timer = new Timer(ProcessarPedidos, null, TimeSpan.Zero, TimeSpan.FromSeconds(15);
+        _timer = new Timer(ProcessarPedidos, null, TimeSpan.Zero, TimeSpan.FromSeconds(15));
         return Task.CompletedTask;
     }
 
@@ -29,6 +31,13 @@ public class PedidoOrquestradorIntegrationHandler : IHostedService, IDisposable
         {
             var pedidoQueries = scope.ServiceProvider.GetRequiredService<IPedidoQueries>();
             var pedido = await pedidoQueries.ObterPedidosAutorizados();
+            if (pedido == null) return;
+            var bus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
+            var pedidoAutorizado = new PedidoAutorizadoIntegrationEvent(pedido.ClienteId, pedido.Id,
+                pedido.PedidoItens.ToDictionary(p => p.ProdutoId, p => p.Quantidade));
+            await bus.PublishAsync(pedidoAutorizado);
+            _logger.LogInformation($"Pedido ID: {pedido.Id} foi encaminhado para baixa no estoque");
+
         }
     }
 

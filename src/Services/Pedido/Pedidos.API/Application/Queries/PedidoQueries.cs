@@ -45,7 +45,7 @@ public class PedidoQueries : IPedidoQueries
         return pedidos.Select(PedidoDto.ParaPedidoDto);
     }
 
-    public async Task<PedidoDto> ObterPedidosAutorizados()
+    public async Task<PedidoDto?> ObterPedidosAutorizados()
     {
         const string sql = @"select p.'Id' as 'PedidoId',
                                     p.'Id',
@@ -59,7 +59,7 @@ public class PedidoQueries : IPedidoQueries
                                     where p.'PedidoStatus' = 1
                                     order by p.'DataCadastro' 
                                     limit 1";
-        var pedido = await _pedidoRepository.ObterConexao().QueryAsync<PedidoDto, PedidoItemDto, PedidoDto>(sql,
+        IEnumerable<PedidoDto?> pedido = await _pedidoRepository.ObterConexao().QueryAsync<PedidoDto, PedidoItemDto, PedidoDto>(sql,
             (p, pi) =>
             {
                 p.PedidoItens = new List<PedidoItemDto>();
