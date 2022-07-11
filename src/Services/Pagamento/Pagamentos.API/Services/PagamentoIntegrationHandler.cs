@@ -1,4 +1,5 @@
-﻿using Core.Message.Integration;
+﻿using Core.DomainObjects;
+using Core.Message.Integration;
 using MessageBus;
 using Pagamentos.API.Models;
 
@@ -18,6 +19,7 @@ public class PagamentoIntegrationHandler : BackgroundService
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         SetResponder();
+        SetSubscribers();
         return Task.CompletedTask;
     }
 
@@ -25,6 +27,15 @@ public class PagamentoIntegrationHandler : BackgroundService
     {
         _messageBus.RespondAsync<PedidoIniciadoIntegrationEvent, ResponseMessage>(async request =>
             await AutorizarPagamento(request));
+    }
+
+    private void SetSubscribers()
+    {
+        _messageBus.SubscribeAsync<PedidoCanceladoIntegrationEvent>("PedidoCancelado", async request =>
+            await CancelarPagamento(request));
+        
+        _messageBus.SubscribeAsync<PedidoBaixadoIntegrationEvent>("PedidoBaixadoEstoque", async request =>
+            await CapturarPagamento(request));
     }
 
     private async Task<ResponseMessage> AutorizarPagamento(PedidoIniciadoIntegrationEvent message)
@@ -45,5 +56,33 @@ public class PagamentoIntegrationHandler : BackgroundService
         }
 
         return response;
+    }
+    
+    private async Task CapturarPagamento(PedidoBaixadoIntegrationEvent message)
+    {
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var pagamentoService = scope.ServiceProvider.GetRequiredService<IPagamentoService>();
+            var response = await pagamentoService.CapturarPagamento(message.PedidoId);
+            if (!response.ValidationResult.IsValid)
+            {
+                throw new DomainException($"Falha ao capturar pagamento do pedido {message.PedidoId}");
+            }
+
+            await _messageBus.PublishAsync(new PedidoPagoIntegrationEvent(message.ClienteId, message.PedidoId));
+        }
+    }
+
+    private async Task CancelarPagamento(PedidoCanceladoIntegrationEvent message)
+    {
+        using (var scope = _serviceProvider.CreateScope())
+        {
+            var pagamentoService = scope.ServiceProvider.GetRequiredService<IPagamentoService>();
+            var response = await pagamentoService.CancelarPagamento(message.PedidoId);
+            if (!response.ValidationResult.IsValid)
+            {
+                throw new DomainException($"Falha ao cancelar pagamento do pedido {message.PedidoId}");
+            }
+        }
     }
 }

@@ -40,26 +40,26 @@ public class PagamentoCartaoCreditoFacade : IPagamentoFacade
         return ParaTransacao(await transacao.AuthorizeCardTransaction());
     }
 
-    // public async Task<Transacao> CapturarPagamento(Transacao transacao)
-    // {
-    //     var nerdsPagSvc = new NerdsPagService(_pagamentoConfig.DefaultApiKey,
-    //         _pagamentoConfig.DefaultEncryptionKey);
-    //
-    //     var transaction = ParaTransaction(transacao, nerdsPagSvc);
-    //
-    //     return ParaTransacao(await transaction.CaptureCardTransaction());
-    // }
-    //
-    // public async Task<Transacao> CancelarAutorizacao(Transacao transacao)
-    // {
-    //     var nerdsPagSvc = new NerdsPagService(_pagamentoConfig.DefaultApiKey,
-    //         _pagamentoConfig.DefaultEncryptionKey);
-    //
-    //     var transaction = ParaTransaction(transacao, nerdsPagSvc);
-    //
-    //     return ParaTransacao(await transaction.CancelAuthorization());
-    // }
-    //
+    public async Task<Transacao> CapturarPagamento(Transacao transacao)
+    {
+        var nerdsPagSvc = new NerdsPagService(_pagamentoConfig.DefaultApiKey,
+            _pagamentoConfig.DefaultEncryptionKey);
+    
+        var transaction = ParaTransaction(transacao, nerdsPagSvc);
+    
+        return ParaTransacao(await transaction.CaptureCardTransaction());
+    }
+    
+    public async Task<Transacao> CancelarAutorizacao(Transacao transacao)
+    {
+        var nerdsPagSvc = new NerdsPagService(_pagamentoConfig.DefaultApiKey,
+            _pagamentoConfig.DefaultEncryptionKey);
+    
+        var transaction = ParaTransaction(transacao, nerdsPagSvc);
+    
+        return ParaTransacao(await transaction.CancelAuthorization());
+    }
+    
     public static Transacao ParaTransacao(Transaction transaction)
     {
         return new Transacao
@@ -75,18 +75,18 @@ public class PagamentoCartaoCreditoFacade : IPagamentoFacade
             TID = transaction.Tid
         };
     }
-    //
-    // public static Transaction ParaTransaction(Transacao transacao, NerdsPagService nerdsPagService)
-    // {
-    //     return new Transaction(nerdsPagService)
-    //     {
-    //         Status = (TransactionStatus) transacao.Status,
-    //         Amount = transacao.ValorTotal,
-    //         CardBrand = transacao.BandeiraCartao,
-    //         AuthorizationCode = transacao.CodigoAutorizacao,
-    //         Cost = transacao.CustoTransacao,
-    //         Nsu = transacao.NSU,
-    //         Tid = transacao.TID
-    //     };
-    // }
+    
+    public static Transaction ParaTransaction(Transacao transacao, NerdsPagService nerdsPagService)
+    {
+        return new Transaction(nerdsPagService)
+        {
+            Status = (TransactionStatus) transacao.Status,
+            Amount = transacao.ValorTotal,
+            CardBrand = transacao.BandeiraCartao,
+            AuthorizationCode = transacao.CodigoAutorizacao,
+            Cost = transacao.CustoTransacao,
+            Nsu = transacao.NSU,
+            Tid = transacao.TID
+        };
+    }
 }

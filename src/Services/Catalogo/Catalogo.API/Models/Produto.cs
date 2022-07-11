@@ -22,5 +22,16 @@ namespace Catalogo.API.Models
         {
             
         }
+
+        public bool EstaDisponivel(int quantidadeProduto)
+        {
+            return Ativo && QuantidadeEstoque >= quantidadeProduto;
+        }
+
+        public void RetirarEstoque(int quantidadeProduto)
+        {
+            if (QuantidadeEstoque >= quantidadeProduto)
+                QuantidadeEstoque -= quantidadeProduto;
+        }
     }
 }

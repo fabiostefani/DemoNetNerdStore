@@ -1,8 +1,8 @@
-﻿using Core.Utils;
+﻿using Catalogo.API.Services;
+using Core.Utils;
 using MessageBus;
-using Pedidos.API.Servicees;
 
-namespace Pedidos.API.Configuration;
+namespace Catalogo.API.Configuration;
 
 public static class MessageBusConfig
 {
@@ -10,7 +10,6 @@ public static class MessageBusConfig
         IConfiguration configuration)
     {
         services.AddMessageBus(configuration.GetMessageQueueConnection("MessageBus"))
-            .AddHostedService<PedidoOrquestradorIntegrationHandler>()
-            .AddHostedService<PedidoIntegrationHandler>();
+            .AddHostedService<CatalogoIntegrationHandler>();
     }
 }
