@@ -1,5 +1,6 @@
 using Catalogo.API.Models;
 using Core.Data;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalogo.API.Data.Repositories
@@ -14,9 +15,36 @@ namespace Catalogo.API.Data.Repositories
             _context = context;
 
         }
-        public async Task<IEnumerable<Produto>> ObterTodos()
+        public async Task<PagedResult<Produto>> ObterTodos(int pageSize, int pageIndex, string? query = null)
         {
-            return await _context.Produtos.AsNoTracking().ToListAsync();
+            var sql = @$"select * 
+                          from produtos p    
+                        where (p.""Nome"" like '%' || @nome || '%' or @nome is null)
+                         order by p.""Nome""                                                
+                         limit {pageSize}
+                         OFFSET {pageSize * (pageIndex - 1)};
+                    select count(p.""Id"") from produtos p
+                     where (p.""Nome"" like '%' || @nome || '%' or @nome is null)";
+            
+            var multi = await _context.Database.GetDbConnection()
+                .QueryMultipleAsync(sql, new {nome = query});
+            
+            var produtos = multi.Read<Produto>();
+            var total = multi.Read<int>().FirstOrDefault();
+
+            return new PagedResult<Produto>()
+            {
+                List = produtos,
+                TotalResults = total,
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                Query = query
+            };
+
+            // return await _context.Produtos.AsNoTracking()
+            //     .Skip(pageSize * (pageIndex - 1))
+            //     .Take(pageSize)
+            //     .ToListAsync();
         }
 
         public async Task<Produto>? ObterPorId(Guid id)
