@@ -47,17 +47,17 @@ public class PedidoQueries : IPedidoQueries
 
     public async Task<PedidoDto?> ObterPedidosAutorizados()
     {
-        const string sql = @"select p.'Id' as 'PedidoId',
-                                    p.'Id',
-                                    p.'ClienteId',
-                                    pi2.'Id' as 'PedidoItemId',
-                                    pi2.'Id',
-                                    pi2.'ProdutoId',
-                                    pi2.'Quantidade'
-                                    from 'Pedidos' p 
-                                        inner join 'PedidoItems' pi2 on p.'Id' = pi2.'PedidoId' 
-                                    where p.'PedidoStatus' = 1
-                                    order by p.'DataCadastro' 
+        const string sql = @"select p.""Id"" as ""PedidoId"",
+                                    p.""Id"",
+                                    p.""ClienteId"",
+                                    pi2.""Id"" as ""PedidoItemId"",
+                                    pi2.""Id"",
+                                    pi2.""ProdutoId"",
+                                    pi2.""Quantidade""
+                                    from ""Pedidos"" p 
+                                        inner join ""PedidoItems"" pi2 on p.""Id"" = pi2.""PedidoId"" 
+                                    where p.""PedidoStatus"" = 1
+                                    order by p.""DataCadastro"" 
                                     limit 1";
         IEnumerable<PedidoDto?> pedido = await _pedidoRepository.ObterConexao().QueryAsync<PedidoDto, PedidoItemDto, PedidoDto>(sql,
             (p, pi) =>

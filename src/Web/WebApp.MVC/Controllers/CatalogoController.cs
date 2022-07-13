@@ -16,9 +16,9 @@ namespace WebApp.MVC.Controllers
         [HttpGet]
         [Route("")]
         [Route("vitrine")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] int pageSize = 8, [FromQuery] int pageIndex = 1, [FromQuery] string? query = null)
         {
-            IEnumerable<ProdutoViewModel> produtos = await _catalogoService.ObterTodos();
+            PagedViewModel<ProdutoViewModel>? produtos = await _catalogoService.ObterTodos(pageSize, pageIndex, query);
             return View(produtos);
         }
 
