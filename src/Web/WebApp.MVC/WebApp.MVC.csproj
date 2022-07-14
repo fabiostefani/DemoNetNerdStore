@@ -21,4 +21,8 @@
     <ProjectReference Include="..\..\building blocks\Core\Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AdditionalFiles Include="Views\Shared\Components\Paginacao\Default.cshtml" />
+  </ItemGroup>
+
 </Project>

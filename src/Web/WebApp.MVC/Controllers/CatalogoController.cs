@@ -19,6 +19,8 @@ namespace WebApp.MVC.Controllers
         public async Task<IActionResult> Index([FromQuery] int pageSize = 8, [FromQuery] int pageIndex = 1, [FromQuery] string? query = null)
         {
             PagedViewModel<ProdutoViewModel>? produtos = await _catalogoService.ObterTodos(pageSize, pageIndex, query);
+            ViewBag.Pesquisa = query;
+            produtos.ReferenceAction = "Index";
             return View(produtos);
         }
 
