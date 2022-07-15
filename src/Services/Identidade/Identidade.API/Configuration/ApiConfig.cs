@@ -1,4 +1,5 @@
 using Api.Core.Identidade;
+using Api.Core.Usuario;
 
 namespace Identidade.API.Configuration
 {
@@ -6,6 +7,7 @@ namespace Identidade.API.Configuration
     {
         public static IServiceCollection AddApiConfiguration(this IServiceCollection services)
         {
+            services.AddScoped<IAspNetUser, AspNetUser>();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             return services;
@@ -20,6 +22,8 @@ namespace Identidade.API.Configuration
             app.UseHttpsRedirection();
 
             app.UseAuthConfiguration();
+            //localhost/jwts
+            app.UseJwksDiscovery();
             
             return app;
         }

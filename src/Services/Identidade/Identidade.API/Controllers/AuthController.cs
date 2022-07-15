@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Api.Core.Identidade;
+using Api.Core.Usuario;
 using Core.Message.Integration;
 using EasyNetQ;
 using MessageBus;
+using NetDevPack.Security.Jwt.Core.Interfaces;
 
 namespace Identidade.API.Controllers
 {
@@ -22,16 +24,22 @@ namespace Identidade.API.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppSettings _appSettings;
         private readonly IMessageBus _bus;
+        private readonly IAspNetUser _aspNetUser;
+        private readonly IJwtService _jwtService;
 
         public AuthController(SignInManager<IdentityUser> signManager,
                               UserManager<IdentityUser> userManager, 
                               IOptions<AppSettings> appSettings,
-                              IMessageBus bus)
+                              IMessageBus bus, 
+                              IAspNetUser aspNetUser, 
+                              IJwtService jwtService)
         {
             _signManager = signManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;
             _bus = bus;
+            _aspNetUser = aspNetUser;
+            _jwtService = jwtService;
         }
         /// <summary>
         /// Adiciona um Novo Usuário
@@ -144,7 +152,7 @@ namespace Identidade.API.Controllers
             var claims = await _userManager.GetClaimsAsync(user);
 
             var identityClaims = await ObterClaimsUsuario(claims, user);
-            var encodedToken = CodificarToken(identityClaims);
+            var encodedToken = await CodificarToken(identityClaims);
 
             return ObterRespostaToken(encodedToken, user, claims);
         }
@@ -170,18 +178,18 @@ namespace Identidade.API.Controllers
             return identityClaims;
         }
 
-        private string CodificarToken(ClaimsIdentity identityClaims)
+        private async Task<string> CodificarToken(ClaimsIdentity identityClaims)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Segredo);
+            var key = await _jwtService.GetCurrentSigningCredentials();
+            var currentIssuer = $"{_aspNetUser.ObterHttpContext().Request.Scheme}://{_aspNetUser.ObterHttpContext().Request.Host}";
 
             var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
             {
-                Issuer = _appSettings.Emissor,
-                Audience = _appSettings.ValidoEm,
+                Issuer = currentIssuer,
                 Subject = identityClaims,
-                Expires = DateTime.UtcNow.AddHours(_appSettings.ExpiracaoHoras),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = key
             });
 
             return tokenHandler.WriteToken(token);            
