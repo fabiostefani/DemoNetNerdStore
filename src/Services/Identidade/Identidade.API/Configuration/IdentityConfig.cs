@@ -1,4 +1,3 @@
-using Api.Core.Identidade;
 using Identidade.API.Data;
 using Identidade.API.Extensions;
 using Microsoft.AspNetCore.Identity;
@@ -24,7 +23,6 @@ namespace Identidade.API.Configuration
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddJwtConfiguration(configuration);
             return services;
         }
     }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using NetDevPack.Security.JwtExtensions;
 
 namespace Api.Core.Identidade
 {
@@ -14,7 +15,7 @@ namespace Api.Core.Identidade
             IConfigurationSection appSettingsSecction = configuration.GetSection(key: "AppSettings");
             services.Configure<AppSettings>(appSettingsSecction);
             AppSettings appSettings = appSettingsSecction.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Segredo);
+            
             
             services.AddAuthentication(opt =>
             {
@@ -24,15 +25,7 @@ namespace Api.Core.Identidade
             {
                 bearerOptions.RequireHttpsMetadata = true;
                 bearerOptions.SaveToken = true;
-                bearerOptions.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = appSettings.ValidoEm,
-                    ValidIssuer = appSettings.Emissor
-                };
+                bearerOptions.SetJwksOptions(new JwkOptions(appSettings.AutenticacaoKwksUrl));
             });
             return services;
         }
