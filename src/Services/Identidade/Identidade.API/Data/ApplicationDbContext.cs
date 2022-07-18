@@ -1,3 +1,4 @@
+using Identidade.API.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NetDevPack.Security.Jwt.Core.Model;
@@ -13,5 +14,6 @@ namespace Identidade.API.Data
         }
 
         public DbSet<KeyMaterial> SecurityKeys { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

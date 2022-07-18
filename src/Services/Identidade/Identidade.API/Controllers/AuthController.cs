@@ -1,18 +1,10 @@
-using System.Text;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Api.Core.Controllers;
 using Identidade.API.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Api.Core.Identidade;
-using Api.Core.Usuario;
 using Core.Message.Integration;
-using EasyNetQ;
+using Identidade.API.Services;
 using MessageBus;
-using NetDevPack.Security.Jwt.Core.Interfaces;
 
 namespace Identidade.API.Controllers
 {
@@ -20,27 +12,17 @@ namespace Identidade.API.Controllers
     [Produces("application/json")]
     public class AuthController : MainController
     {
-        private readonly SignInManager<IdentityUser> _signManager;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly AppSettings _appSettings;
+        private readonly AuthenticationService _authenticationService;
         private readonly IMessageBus _bus;
-        private readonly IAspNetUser _aspNetUser;
-        private readonly IJwtService _jwtService;
 
-        public AuthController(SignInManager<IdentityUser> signManager,
-                              UserManager<IdentityUser> userManager, 
-                              IOptions<AppSettings> appSettings,
-                              IMessageBus bus, 
-                              IAspNetUser aspNetUser, 
-                              IJwtService jwtService)
+        public AuthController(
+            AuthenticationService authenticationService,
+            IMessageBus bus)
         {
-            _signManager = signManager;
-            _userManager = userManager;
-            _appSettings = appSettings.Value;
+            _authenticationService = authenticationService;
             _bus = bus;
-            _aspNetUser = aspNetUser;
-            _jwtService = jwtService;
         }
+
         /// <summary>
         /// Adiciona um Novo Usuário
         /// </summary>
@@ -64,43 +46,56 @@ namespace Identidade.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Registrar(UsuarioRegistro usuarioRegistro)
         {
-            if (!ModelState.IsValid) 
-                return CustomResponse(usuarioRegistro);
-            IdentityUser user = CreateUserIdentity(usuarioRegistro);
-            var resultCreateUser = await _userManager.CreateAsync(user, usuarioRegistro.Senha);
-            if (resultCreateUser.Succeeded)
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            var user = new IdentityUser
             {
-                ResponseMessage clienteResult = await RegistrarCliente(usuarioRegistro);
+                UserName = usuarioRegistro.Email,
+                Email = usuarioRegistro.Email,
+                EmailConfirmed = true
+            };
+
+            var result = await _authenticationService.UserManager.CreateAsync(user, usuarioRegistro.Senha);
+
+            if (result.Succeeded)
+            {
+                var clienteResult = await RegistrarCliente(usuarioRegistro);
+
                 if (!clienteResult.ValidationResult.IsValid)
                 {
-                    await _userManager.DeleteAsync(user);
+                    await _authenticationService.UserManager.DeleteAsync(user);
                     return CustomResponse(clienteResult.ValidationResult);
                 }
-                return CustomResponse(await GerarJwt(usuarioRegistro.Email));    
+
+                return CustomResponse(await _authenticationService.GerarJwt(usuarioRegistro.Email));
             }
-            foreach (var erro in resultCreateUser.Errors)
+
+            foreach (var error in result.Errors)
             {
-                AdicionarErroProcessamento(erro.Description);
+                AdicionarErroProcessamento(error.Description);
             }
+
             return CustomResponse();
         }
 
         private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistro usuarioRegistro)
         {
-            IdentityUser? usuario = await _userManager.FindByEmailAsync(usuarioRegistro.Email);
-            var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(Guid.Parse(usuario.Id), usuarioRegistro.Nome,
-                usuarioRegistro.Email, usuarioRegistro.Cpf);
+            var usuario = await _authenticationService.UserManager.FindByEmailAsync(usuarioRegistro.Email);
+
+            var usuarioRegistrado = new UsuarioRegistradoIntegrationEvent(
+                Guid.Parse(usuario.Id), usuarioRegistro.Nome, usuarioRegistro.Email, usuarioRegistro.Cpf);
+
             try
             {
                 return await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
             }
             catch
             {
-                await _userManager.DeleteAsync(usuario);
+                await _authenticationService.UserManager.DeleteAsync(usuario);
                 throw;
             }
         }
-        
+
         private static IdentityUser CreateUserIdentity(UsuarioRegistro usuarioRegistro)
         {
             return new IdentityUser
@@ -133,86 +128,46 @@ namespace Identidade.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Login(UsuarioLogin usuarioLogin)
         {
-            if (!ModelState.IsValid) return CustomResponse();
-            var resultLogin = await _signManager.PasswordSignInAsync(usuarioLogin.Email, usuarioLogin.Senha, isPersistent: false, lockoutOnFailure: true);
-            if (resultLogin.Succeeded) return CustomResponse(await GerarJwt(usuarioLogin.Email));
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            if (resultLogin.IsLockedOut)
+            var result = await _authenticationService.SignInManager.PasswordSignInAsync(usuarioLogin.Email,
+                usuarioLogin.Senha,
+                false, true);
+
+            if (result.Succeeded)
             {
-                AdicionarErroProcessamento("Usuário bloqueado");
+                return CustomResponse(await _authenticationService.GerarJwt(usuarioLogin.Email));
+            }
+
+            if (result.IsLockedOut)
+            {
+                AdicionarErroProcessamento("Usuário temporariamente bloqueado por tentativas inválidas");
                 return CustomResponse();
             }
-            AdicionarErroProcessamento("Usuário/senha inválido.");
+
+            AdicionarErroProcessamento("Usuário ou Senha incorretos");
             return CustomResponse();
         }
 
-        private async Task<UsuarioRespostaLogin> GerarJwt(string email)
+
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult> RefreshToken([FromBody] string refreshToken)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            var claims = await _userManager.GetClaimsAsync(user);
-
-            var identityClaims = await ObterClaimsUsuario(claims, user);
-            var encodedToken = await CodificarToken(identityClaims);
-
-            return ObterRespostaToken(encodedToken, user, claims);
-        }
-
-        private async Task<ClaimsIdentity> ObterClaimsUsuario(ICollection<Claim> claims, IdentityUser user)
-        {
-            var userRoles = await _userManager.GetRolesAsync(user);
-
-            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTime.UtcNow).ToString()));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer64));
-
-            foreach (var userRole in userRoles)
+            if (string.IsNullOrEmpty(refreshToken))
             {
-                claims.Add(new Claim("role", userRole));
+                AdicionarErroProcessamento("Refresh Token inválido");
+                return CustomResponse();
             }
 
-            var identityClaims = new ClaimsIdentity();
-            identityClaims.AddClaims(claims);
+            var token = await _authenticationService.ObterRefreshToken(Guid.Parse(refreshToken));
 
-            return identityClaims;
-        }
-
-        private async Task<string> CodificarToken(ClaimsIdentity identityClaims)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = await _jwtService.GetCurrentSigningCredentials();
-            var currentIssuer = $"{_aspNetUser.ObterHttpContext().Request.Scheme}://{_aspNetUser.ObterHttpContext().Request.Host}";
-
-            var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
+            if (token is null)
             {
-                Issuer = currentIssuer,
-                Subject = identityClaims,
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = key
-            });
+                AdicionarErroProcessamento("Refresh Token expirado");
+                return CustomResponse();
+            }
 
-            return tokenHandler.WriteToken(token);            
+            return CustomResponse(await _authenticationService.GerarJwt(token.Username));
         }
-
-        private UsuarioRespostaLogin ObterRespostaToken(string encodedToken, IdentityUser user, ICollection<Claim> claims)
-        {
-            var response = new UsuarioRespostaLogin
-            {
-                AccessToken = encodedToken,
-                ExpiresIn = TimeSpan.FromHours(1).TotalSeconds,
-                UsuarioToken = new UsuarioToken
-                {
-                    Id = user.Id,
-                    Email = user.Email,
-                    Claims = claims.Select(x => new UsuarioClaim { Type = x.Type, Value = x.Value })
-                }
-            };
-
-            return response;
-        }
-
-        private static long ToUnixEpochDate(DateTime date)
-            => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
     }
 }
