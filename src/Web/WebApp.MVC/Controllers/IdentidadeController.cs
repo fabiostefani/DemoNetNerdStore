@@ -33,7 +33,7 @@ namespace WebApp.MVC.Controllers
             if (respostaLogin == null)
                 throw new Exception("Erro gerando o login na API de Autenticação.");            
             if (ResponsePossuiErros(respostaLogin.ResponseResult) ) return View(usuarioRegistro);
-            await RealizarLogin(respostaLogin);
+            await _autenticacaoService.RealizarLogin(respostaLogin);
 
             return RedirectToAction(actionName: "Index", controllerName: "Home");
         }
@@ -55,7 +55,7 @@ namespace WebApp.MVC.Controllers
             var respostaLogin = await _autenticacaoService.Login(usuarioLogin);
             ArgumentNullException.ThrowIfNull(respostaLogin, "Erro gerando o login na API de Autenticação.");            
             if (ResponsePossuiErros(respostaLogin.ResponseResult) ) return View(usuarioLogin);
-            await RealizarLogin(respostaLogin);
+            await _autenticacaoService.RealizarLogin(respostaLogin);
             // if (string.IsNullOrEmpty(returnUrl)) return RedirectToAction("Index", "Home");
             // return LocalRedirect(returnUrl);
             return RedirectToAction("Index", "Home");
@@ -65,33 +65,8 @@ namespace WebApp.MVC.Controllers
         [Route("sair")]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await _autenticacaoService.Logout();
             return RedirectToAction(actionName: "Index", controllerName: "Home");
-        }
-
-        private async Task RealizarLogin(UsuarioRespostaLogin usuarioRespostaLogin)
-        {
-            ArgumentNullException.ThrowIfNull(usuarioRespostaLogin.AccessToken, "Token Inválido");            
-            JwtSecurityToken? token = ObterTokenFormatado(usuarioRespostaLogin.AccessToken);
-            ArgumentNullException.ThrowIfNull(token, "Falha na formatação do Token.");            
-            var claims = new List<Claim>();
-            claims.Add(new Claim(type: "JWT", value: usuarioRespostaLogin.AccessToken));
-            claims.AddRange(token.Claims);
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties
-            {
-                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60),
-                IsPersistent = true
-            };
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
-        }
-
-        private static JwtSecurityToken? ObterTokenFormatado(string jwtToken)
-        {
-            return new JwtSecurityTokenHandler().ReadToken(jwtToken) as JwtSecurityToken;
         }
     }
 }

@@ -57,7 +57,14 @@ public class AspNetUser : IAspNetUser
     {
         return EstaAutenticado()
             ? _accessor.ValidarHttpContext().ValidarUser().GetUserToken()
-            : "";
+            : default;
+    }
+
+    public string? ObterUserRefreshToken()
+    {
+        return EstaAutenticado()
+            ? _accessor.ValidarHttpContext().ValidarUser().GetUserRefreshToken()
+            : default;
     }
 
     public bool? PossuiRole(string role)
