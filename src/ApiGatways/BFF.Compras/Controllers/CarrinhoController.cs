@@ -1,5 +1,6 @@
 ﻿using Api.Core.Controllers;
 using BFF.Compras.Models;
+using BFF.Compras.Services.gRPC;
 using BFF.Compras.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,23 +15,26 @@ public class CarrinhoController : MainController
     private readonly ICatalogoService _catalogoService;
     private readonly IPedidoService _pedidoService;
     private readonly ILogger<CarrinhoController> _logger;
+    private readonly ICarrinhoGrpcService _carrinhoGrpcService;
 
     public CarrinhoController(ICarrinhoService carrinhoService,
                               ICatalogoService catalogoService,
                               IPedidoService pedidoService,
-                              ILogger<CarrinhoController> logger)
+                              ILogger<CarrinhoController> logger,
+                              ICarrinhoGrpcService carrinhoGrpcService)
     {
         _carrinhoService = carrinhoService;
         _catalogoService = catalogoService;
         _pedidoService = pedidoService;
         _logger = logger;
+        _carrinhoGrpcService = carrinhoGrpcService;
     }
     
     [HttpGet]
     [Route("compras/carrinho")]
     public async Task<IActionResult> Index()
     {
-        return CustomResponse(await _carrinhoService.ObterCarrinho());
+        return CustomResponse(await _carrinhoGrpcService.ObterCarrinho());
         return Ok();
     }
     
@@ -38,7 +42,7 @@ public class CarrinhoController : MainController
     [Route("compras/carrinho-quantidade")]
     public async Task<int> ObterQuantidadeCarrinho()
     {
-        var quantidade = await _carrinhoService.ObterCarrinho();
+        var quantidade = await _carrinhoGrpcService.ObterCarrinho();
         return quantidade?.Itens.Sum(x => x.Quantidade) ?? 0;
     }
     

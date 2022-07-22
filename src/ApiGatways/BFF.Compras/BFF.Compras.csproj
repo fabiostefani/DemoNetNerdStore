@@ -8,6 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.21.3" />
+        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.47.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.47.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     </ItemGroup>
 
@@ -15,6 +21,10 @@
       <ProjectReference Include="..\..\Building blocks\Api.Core\Api.Core.csproj" />
       <ProjectReference Include="..\..\building blocks\Core\Core.csproj" />
       <ProjectReference Include="..\..\Building blocks\MessageBus\MessageBus.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Protobuf Include="..\..\services\Carrinho\Carrinho.API\Protos\carrinho.proto" GrpServices="Client" />
     </ItemGroup>
 
 </Project>

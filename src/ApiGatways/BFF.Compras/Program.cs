@@ -8,6 +8,7 @@ builder.Services.AddJwtConfiguration(builder.Configuration);
 builder.Services.AddSwaggerConfiguration();
 builder.Services.RegisterServicecs();
 builder.Services.AddMessageBusConfig(builder.Configuration);
+builder.Services.ConfigureGrpcServices(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 var app = builder.Build();
 

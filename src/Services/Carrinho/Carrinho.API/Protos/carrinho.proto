@@ -5,7 +5,7 @@ option csharp_namespace = "Carrinho.API.Services.gRPC";
 package CarrinhoAPI;
 
 service CarrinhoCompras {
-  rpc ObterCarrinho(ObterCarrinhoRequest) returns (CarrinhoClienteResponde) { }
+  rpc ObterCarrinho(ObterCarrinhoRequest) returns (CarrinhoClienteResponse) { }
   //rpc ObterCarrinho(ObterCarrinhoRequest) returns (CarrinhoClienteResponde) { } ///SE TIVER MAIS MÉTODOS, ADICIONA AQUI
 }
 
@@ -13,7 +13,7 @@ message ObterCarrinhoRequest {
   
 }
 
-message CarrinhoClienteResponde {
+message CarrinhoClienteResponse {
   string id = 1;
   string clienteid = 2;
   double valortotal = 3;
@@ -33,10 +33,8 @@ message CarrinhoItemResponse {
 }
 
 message VoucherResponse {
-  string id = 1;
-  string produtoid = 2;
-  string nome = 3;
-  int32 quantidade = 4;
-  double valor = 5;
-  string imagem = 6;
+  double percentual = 1;
+  double valordesconto = 2;
+  string codigo = 3;
+  int32 tipodesconto = 4;
 }

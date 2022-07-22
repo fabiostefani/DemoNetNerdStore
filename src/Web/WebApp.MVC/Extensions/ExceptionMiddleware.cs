@@ -1,5 +1,6 @@
 using System.Net;
 using System.Reflection.Metadata.Ecma335;
+using Grpc.Core;
 using Polly.CircuitBreaker;
 using Refit;
 using WebApp.MVC.Services;
@@ -37,6 +38,19 @@ namespace WebApp.MVC.Extensions
             catch (BrokenCircuitException)
             {
                 HandleCircuitBreakerExceptionAsync(httpContext);
+            }
+            catch (RpcException ex)
+            {
+                var statusCode = ex.StatusCode switch
+                {
+                    StatusCode.Internal => 400,
+                    StatusCode.Unauthenticated => 401,
+                    StatusCode.PermissionDenied => 403,
+                    StatusCode.Unimplemented => 404,
+                    _ => 500
+                };
+                var httpStatusCode = (HttpStatusCode) Enum.Parse(typeof(HttpStatusCode), statusCode.ToString());
+                HandleRequestExceptionAsync(httpContext, httpStatusCode);
             }
         }
 

@@ -13,7 +13,7 @@ public partial class CarrinhoCliente
     public ValidationResult ValidationResult { get; set; }
     public bool VoucherUtilizado { get; set; }
     public decimal Desconto { get; set; }
-    public Voucher Voucher { get; set; }
+    public Voucher? Voucher { get; set; }
 
     public CarrinhoCliente(Guid clienteId)
     {

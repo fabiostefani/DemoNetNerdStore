@@ -11,6 +11,7 @@ public static class ApiConfig
         services.AddDbContext<CarrinhoContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
         services.AddControllers();
+        services.AddGrpc();
         services.AddCors(options =>
         {
             options.AddPolicy(name: "Total", configurePolicy: builder =>
