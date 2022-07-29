@@ -13,7 +13,7 @@ COPY ["./Building blocks/Core/Core.csproj", "building blocks/WebApi.Core/"]
 
 RUN dotnet restore "web/WebApp.MVC/WebApp.MVC.csproj"
 COPY . .
-WORKDIR "web/WebApp.MVC"
+WORKDIR "web/WebApp.MVC/"
 RUN dotnet build "WebApp.MVC.csproj" -c Release -o /app/build
 
 FROM build AS publish

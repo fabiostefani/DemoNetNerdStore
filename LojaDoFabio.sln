@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "services", "services", "{5F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identidade", "Identidade", "{1394C0EB-449D-49C2-8FD6-549685FCBFB9}"
 EndProject
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identidade.API", "src\services\Identidade\Identidade.API\Identidade.API.csproj", "{2EBBB527-31BD-4E33-BDD0-FF30DDD0BE35}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Building Blocks", "Building Blocks", "{F1C4A6EF-B764-4BB4-BEFE-359107273891}"
@@ -21,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp.MVC", "src\web\WebAp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{5986E400-9437-478A-84DF-C47E72ECFA26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\building blocks\Core\Core.csproj", "{77E7C48E-A16A-46B3-ACBF-28DD2AC22C6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Building blocks\Core\Core.csproj", "{77E7C48E-A16A-46B3-ACBF-28DD2AC22C6F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Carrinho", "Carrinho", "{D7CD87BF-EF34-4E79-A09A-66AAFF7BD49A}"
 EndProject
