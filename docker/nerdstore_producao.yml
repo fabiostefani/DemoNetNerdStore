@@ -11,6 +11,20 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+  
+  postgres:
+    image: fabiostefani/nerdstore-postgresql:latest
+    container_name: "nerdstore-postgresql"
+    build:
+      context: ../sql
+      dockerfile: ./Dockerfile
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Postgres2021!
+      - TZ=GMT    
+    ports:
+      - 5434:5432    
 
   web-mvc:
     image: fabiostefani/nerdstore-web-mvc-ecommerce:latest
