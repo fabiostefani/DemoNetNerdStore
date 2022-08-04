@@ -39,6 +39,40 @@ services:
       - ASPNETCORE_URLS=http://*:5001
     depends_on:
       - api-catalogo
+      - api-identidade
+      - api-cliente
+      - api-bff-compras
+
+  api-identidade:
+    image: fabiostefani/nerdstore-api-identidade:latest
+    container_name: nerdstore-api-identidade
+    build:
+      context: ../src
+      dockerfile: ./services/Identidade/Identidade.API/Dockerfile
+    ports:
+      - "5101:5101"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5101
+    depends_on:
+      - rabbitmq    
+      - postgres
+  
+  api-carrinho:
+    image: fabiostefani/nerdstore-api-carrinho:latest
+    container_name: nerdstore-api-carrinho
+    build:
+      context: ../src
+      dockerfile: ./services/Carrinho/Carrinho.API/Dockerfile
+    ports:
+      - "5201:5201"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5201
+    depends_on:
+      - rabbitmq    
+      - postgres
+      - api-identidade
   
   api-catalogo:
     image: fabiostefani/nerdstore-api-catalogo:latest
@@ -46,9 +80,80 @@ services:
     build:
       context: ../src
       dockerfile: ./services/Catalogo/Catalogo.API/Dockerfile
+    ports:
+      - "5301:5301"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:5301
     depends_on:
       - rabbitmq
+      - postgres
+  
+  api-cliente:
+    image: fabiostefani/nerdstore-api-cliente:latest
+    container_name: nerdstore-api-cliente
+    build:
+      context: ../src
+      dockerfile: ./services/Cliente/Cliente.API/Dockerfile
+    ports:
+      - "5401:5401"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5401
+    depends_on:
+      - rabbitmq
+      - api-identidade
+      - postgres
+  
+  api-bff-compras:
+    image: fabiostefani/nerdstore-api-bff-compras:latest
+    container_name: nerdstore-api-bff-compras
+    build:
+      context: ../src
+      dockerfile: ./ApiGatways/BFF.Compras/Dockerfile
+      ports:
+      - "5501:5501"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5501
+    depends_on:
+      - rabbitmq
+      - api-identidade
+      - api-carrinho
+      - api-pagamento
+      - api-pedido
+
+  api-pagamento:
+    image: fabiostefani/nerdstore-api-pagamento:latest
+    container_name: nerdstore-api-pagamento
+    build:
+      context: ../src
+      dockerfile: ./services/Pagamento/Pagamento.API/Dockerfile
+    ports:
+      - "5601:5601"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5601
+    depends_on:
+      - rabbitmq
+      - api-identidade
+      - postgres
+      - api-pedido
+
+  api-pedido:
+    image: fabiostefani/nerdstore-api-pedido:latest
+    container_name: nerdstore-api-pedido
+    build:
+      context: ../src
+      dockerfile: ./services/Pedido/Pedido.API/Dockerfile
+    ports:
+      - "5701:5701"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://*:5701
+    depends_on:
+      - rabbitmq
+      - api-identidade
+      - postgres      
+
 
