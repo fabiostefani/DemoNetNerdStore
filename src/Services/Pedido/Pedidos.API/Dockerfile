@@ -7,15 +7,15 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["./Services/Pedido/Pedidos.API/Pedidos.API.csproj", "services/Pedido/Pedidos.API/"]
+COPY ["./Services/Pedido/Pedidos.API/Pedidos.API.csproj", "services/Pedidos.API/"]
 COPY ["./Building blocks/Api.Core/Api.Core.csproj", "Building blocks/Api.Core/"]
 COPY ["./Building blocks/Core/Core.csproj", "Building blocks/Core/"]
 COPY ["./Building blocks/MessageBus/MessageBus.csproj", "Building blocks/MessageBus/"]
-COPY ["./Services/Pedido/Pedidos.Infra/Pedidos.Infra.csproj", "Services/Pedido/Pedidos.Infra/"]
-COPY ["./Services/Pedido/Pedidos.Domain/Pedidos.Domain.csproj", "Services/Pedido/Pedidos.Domain/"]
-RUN dotnet restore "src/services/Pedido/Pedidos.API/Pedidos.API.csproj"
+#COPY ["./Services/Pedido/Pedidos.Infra/Pedidos.Infra.csproj", "Services/Pedido/Pedidos.Infra/"]
+#COPY ["./Services/Pedido/Pedidos.Domain/Pedidos.Domain.csproj", "Services/Pedido/Pedidos.Domain/"]
+RUN dotnet restore "services/Pedidos.API/Pedidos.API.csproj"
 COPY . .
-WORKDIR "services/Pedido/Pedidos.API"
+WORKDIR "services/Pedidos.API"
 RUN dotnet build "Pedidos.API.csproj" -c Release -o /app/build
 
 FROM build AS publish

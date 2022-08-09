@@ -7,14 +7,14 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["./Services/Pagamento/Pagamentos.API/Pagamentos.API.csproj", "services/Pagamento/Pagamentos.API/"]
+COPY ["./Services/Pagamento/Pagamentos.API/Pagamentos.API.csproj", "services/Pagamentos.API/"]
 COPY ["./Building blocks/Api.Core/Api.Core.csproj", "Building blocks/Api.Core/"]
 COPY ["./Building blocks/Core/Core.csproj", "Building blocks/Core/"]
 COPY ["./Building blocks/MessageBus/MessageBus.csproj", "Building blocks/MessageBus/"]
-COPY ["./Services/Pagamento/Pagamentos.NerdsPag/Pagamentos.NerdsPag.csproj", "Services/Pagamento/Pagamentos.NerdsPag/"]
-RUN dotnet restore "services/Pagamento/Pagamentos.API/Pagamentos.API.csproj"
+#COPY ["./Services/Pagamento/Pagamentos.NerdsPag/Pagamentos.NerdsPag.csproj", "Services/Pagamento/Pagamentos.NerdsPag/"]
+RUN dotnet restore "services/Pagamentos.API/Pagamentos.API.csproj"
 COPY . .
-WORKDIR "services/Pagamento/Pagamentos.API"
+WORKDIR "services/Pagamentos.API"
 RUN dotnet build "Pagamentos.API.csproj" -c Release -o /app/build
 
 FROM build AS publish

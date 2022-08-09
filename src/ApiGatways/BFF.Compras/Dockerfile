@@ -5,11 +5,14 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["./ApiGatways/BFF.Compras/BFF.Compras.csproj", "BFF.Compras/"]
+COPY ["./ApiGatways/BFF.Compras/BFF.Compras.csproj", "ApiGatways/BFF.Compras/"]
+COPY ["./Building blocks/Core/Core.csproj", "Building blocks/Core/"]
+COPY ["./Building blocks/Api.Core/Api.Core.csproj", "Building blocks/Api.Core/"]
+COPY ["./Building blocks/MessageBus/MessageBus.csproj", "Building blocks/MessageBus/"]
 
-RUN dotnet restore "./ApiGatways/BFF.Compras/BFF.Compras.csproj"
+RUN dotnet restore "ApiGatways/BFF.Compras/BFF.Compras.csproj"
 COPY . .
-WORKDIR "BFF.Compras"
+WORKDIR "ApiGatways/BFF.Compras"
 RUN dotnet build "BFF.Compras.csproj" -c Release -o /app/build
 
 FROM build AS publish

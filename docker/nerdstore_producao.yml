@@ -111,7 +111,7 @@ services:
     build:
       context: ../src
       dockerfile: ./ApiGatways/BFF.Compras/Dockerfile
-      ports:
+    ports:
       - "5501:5501"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production

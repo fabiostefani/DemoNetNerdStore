@@ -7,13 +7,13 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["./Services/Catalogo/Catalogo.API/Catalogo.API.csproj", "services/Catalogo/Catalogo.API/"]               
+COPY ["./Services/Catalogo/Catalogo.API/Catalogo.API.csproj", "services/Catalogo.API/"]               
 COPY ["./Building blocks/Core/Core.csproj", "Building blocks/Core/"]
 COPY ["./Building blocks/Api.Core/Api.Core.csproj", "Building blocks/Api.Core/"]
 COPY ["./Building blocks/MessageBus/MessageBus.csproj", "Building blocks/MessageBus/"]
-RUN dotnet restore "services/Catalogo/Catalogo.API/Catalogo.API.csproj"
+RUN dotnet restore "services/Catalogo.API/Catalogo.API.csproj"
 COPY . .
-WORKDIR "services/Catalogo/Catalogo.API"
+WORKDIR "services/Catalogo.API"
 RUN dotnet build "Catalogo.API.csproj" -c Release -o /app/build
 
 FROM build AS publish

@@ -7,13 +7,13 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["./Services/Cliente/Clientes.API/Clientes.API.csproj", "services/Cliente/Clientes.API/"]
+COPY ["./Services/Cliente/Clientes.API/Clientes.API.csproj", "services/Clientes.API/"]
 COPY ["./Building blocks/Api.Core/Api.Core.csproj", "Building blocks/Api.Core/"]
 COPY ["./Building blocks/Core/Core.csproj", "Building blocks/Core/"]
 COPY ["./Building blocks/MessageBus/MessageBus.csproj", "Building blocks/MessageBus/"]
-RUN dotnet restore "services/Cliente/Clientes.API/Clientes.API.csproj"
+RUN dotnet restore "services/Clientes.API/Clientes.API.csproj"
 COPY . .
-WORKDIR "services/Cliente/Clientes.API"
+WORKDIR "services/Clientes.API"
 RUN dotnet build "Clientes.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
