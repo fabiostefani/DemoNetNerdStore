@@ -8,9 +8,9 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: "nerdstore"
       RABBITMQ_DEFAULT_PASS: "nerdstore"
-    ports:
-      - "5672:5672"
-      - "15672:15672"
+    # ports:
+    #   - "5672:5672"
+    #   - "15672:15672"
   
   postgres:
     image: fabiostefani/nerdstore-postgresql:latest
@@ -23,8 +23,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=Postgres2021!
       - TZ=GMT    
-    ports:
-      - 5434:5432    
+    # ports:
+    #   - 5434:5432    
 
   web-mvc:
     image: fabiostefani/nerdstore-web-mvc-ecommerce:latest
@@ -32,8 +32,8 @@ services:
     build:
       context: ../src
       dockerfile: ./web/WebApp.MVC/Dockerfile
-    ports:
-      - "5001:5001"
+    # ports:
+    #   - "5001:5001"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:5001
@@ -49,8 +49,8 @@ services:
     build:
       context: ../src
       dockerfile: ./services/Identidade/Identidade.API/Dockerfile
-    ports:
-      - "5101:5101"
+    # ports:
+    #   - "5101:5101"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:5101
@@ -64,8 +64,8 @@ services:
     build:
       context: ../src
       dockerfile: ./services/Carrinho/Carrinho.API/Dockerfile
-    ports:
-      - "5201:5201"
+    # ports:
+    #   - "5201:5201"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:5201
@@ -80,8 +80,8 @@ services:
     build:
       context: ../src
       dockerfile: ./services/Catalogo/Catalogo.API/Dockerfile
-    ports:
-      - "5301:5301"
+    # ports:
+    #   - "5301:5301"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:5301
@@ -95,8 +95,8 @@ services:
     build:
       context: ../src
       dockerfile: ./services/Cliente/Cliente.API/Dockerfile
-    ports:
-      - "5401:5401"
+    # ports:
+    #   - "5401:5401"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:5401
@@ -111,8 +111,8 @@ services:
     build:
       context: ../src
       dockerfile: ./ApiGatways/BFF.Compras/Dockerfile
-    ports:
-      - "5501:5501"
+    # ports:
+    #   - "5501:5501"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:5501
@@ -129,8 +129,8 @@ services:
     build:
       context: ../src
       dockerfile: ./services/Pagamento/Pagamento.API/Dockerfile
-    ports:
-      - "5601:5601"
+    # ports:
+    #   - "5601:5601"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:5601
@@ -146,14 +146,26 @@ services:
     build:
       context: ../src
       dockerfile: ./services/Pedido/Pedido.API/Dockerfile
-    ports:
-      - "5701:5701"
+    # ports:
+    #   - "5701:5701"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://*:5701
     depends_on:
       - rabbitmq
       - api-identidade
-      - postgres      
+      - postgres
+
+  nerdstore-server:
+    image: fabiostefani/nerdstore-server:latest
+    container_name: nerdstore-server    
+    build: 
+        context: ./
+        dockerfile: ./nginx/Dockerfile     
+    ports:
+        - "80:80"
+        - "443:443"
+    depends_on:
+        - web-mvc      
 
 
