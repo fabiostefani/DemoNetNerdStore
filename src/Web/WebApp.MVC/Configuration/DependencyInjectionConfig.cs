@@ -1,3 +1,4 @@
+using Api.Core.Extensions;
 using Api.Core.Usuario;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Polly;
@@ -19,19 +20,23 @@ namespace WebApp.MVC.Configuration
             services.AddTransient<HttpClientAuthorizationDelegationHandler>();
             services.AddHttpClient<IAutenticacaoService, AutenticacaoService>()
                 .AddPolicyHandler(PollyExtensions.EsperarTentar())
+                .AllowSelfSignedCertificate()
                 .AddTransientHttpErrorPolicy(polly => polly.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
             services.AddHttpClient<ICatalogoService, CatalogoService>()
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegationHandler>()
-                .AddPolicyHandler(PollyExtensions.EsperarTentar())
+                .AddPolicyHandler(PollyExtensions.EsperarTentar())                
+                .AllowSelfSignedCertificate()
                 .AddTransientHttpErrorPolicy(polly => polly.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
             services.AddHttpClient<IComprasBffService, ComprasBffService>()
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegationHandler>()
                 .AddPolicyHandler(PollyExtensions.EsperarTentar())
+                .AllowSelfSignedCertificate()
                 .AddTransientHttpErrorPolicy(polly => polly.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
             
             services.AddHttpClient<IClienteService, ClienteService>()
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegationHandler>()
                 .AddPolicyHandler(PollyExtensions.EsperarTentar())
+                .AllowSelfSignedCertificate()
                 .AddTransientHttpErrorPolicy(polly => polly.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
             
             // services.AddHttpClient("Refit", options =>

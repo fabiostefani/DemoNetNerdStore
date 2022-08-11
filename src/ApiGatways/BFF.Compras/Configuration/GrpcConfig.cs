@@ -1,4 +1,5 @@
-﻿using BFF.Compras.Services.gRPC;
+﻿using Api.Core.Extensions;
+using BFF.Compras.Services.gRPC;
 using Carrinho.API.Services.gRPC;
 
 namespace BFF.Compras.Configuration;
@@ -12,6 +13,8 @@ public static class GrpcConfig
         services.AddGrpcClient<CarrinhoCompras.CarrinhoComprasClient>(opt =>
         {
             opt.Address = new Uri(configuration["CarrinhoUrl"]);
-        }).AddInterceptor<GrpcServiceInterceptor>();
+        })
+        .AddInterceptor<GrpcServiceInterceptor>()
+        .AllowSelfSignedCertificate();
     }
 }
